@@ -720,32 +720,6 @@ function renderAttendanceSubmit() {
     ${attendanceMessage ? `<p style="margin:0;font-size:13px;color:${attendanceSuccess?'var(--green)':'var(--coral)'};">${esc(attendanceMessage)}</p>` : ""}
   </div>`;
 }
-
-let bunkMode = "bunks";
-let futureAttend = 1;
-let futureBunk = 0;
-
-function renderBunkManagement() {
-  const MIN = 75;
-
-  let html = `
-    <div class="card" style="display:block;margin-bottom:18px;">
-      <div style="margin-bottom:14px;">
-        <h2 style="margin:0 0 5px;">Bunk Management</h2>
-        <p class="note" style="margin:0;">
-          Check your attendance and see whether future bunks are safe.
-        </p>
-      </div>
-  `;
-
-  if (!state.attendance || state.attendance.length === 0) {
-    html += `
-      <div class="note">
-        No attendance subjects added yet.
-      </div>
-    </div>`;
-    return html;
-  }
 function slugify(str) {
   return (str || "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
@@ -1323,7 +1297,6 @@ function render(){
     html += `<div class="warn">${ICONS.warn}<span>${esc(portalMessage)}</span></div>`;
   }
   html += renderAttendanceSubmit();
-  html += renderBunkManagement();
   html += renderQuickJump();
   html += renderMyPortal();
   document.getElementById("content").innerHTML = html;
