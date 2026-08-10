@@ -721,7 +721,235 @@ function renderAttendanceSubmit() {
   </div>`;
 }
 
-function slugify(str) {
+function slugify(str) {let bunkMode = "bunks";
+let futureAttend = 1;
+let futureBunk = 0;
+
+function renderBunkManagement() {
+  const MIN = 75;
+
+  let html = `
+    <div class="card" style="display:block;margin-bottom:18px;">
+      <div style="margin-bottom:14px;">
+        <h2 style="margin:0 0 5px;">Bunk Management</h2>
+        <p class="note" style="margin:0;">
+          Check your attendance and see whether future bunks are safe.
+        </p>
+      </div>
+  `;
+
+  if (!state.attendance || state.attendance.length === 0) {
+    html += `
+      <div class="note">
+        No attendance subjects added yet.
+      </div>
+    </div>`;
+    return html;
+  }
+
+  state.attendance.forEach(a => {
+    const present = Number(a.present || 0);
+    const total = Number(a.total || 0);
+
+    if (!total) return;
+
+    const current = (present / total) * 100;
+
+    let safeBunks = 0;
+    while (
+      (present / (total + safeBunks + 1)) * 100 >= MIN
+    ) {
+      safeBunks++;
+    }
+
+    const afterOne = (present / (total + 1)) * 100;
+    const safe = current >= MIN;
+
+    html += `
+      <div style="
+        background:var(--board-dark);
+        border:1px solid var(--rail);
+        border-radius:10px;
+        padding:13px;
+        margin-bottom:10px;
+      ">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          gap:10px;
+          margin-bottom:8px;
+        ">
+          <strong>${esc(a.subject)}</strong>
+
+          <strong style="
+            color:${safe ? "var(--green)" : "var(--coral)"};
+          ">
+            ${current.toFixed(1)}%
+          </strong>
+        </div>
+
+        <div class="bar-bg">
+          <div class="bar-fill"
+            style="
+              width:${Math.min(current,100)}%;
+              background:${safe ? "var(--green)" : "var(--coral)"};
+            ">
+          </div>
+        </div>
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          margin-top:8px;
+          font-size:12px;
+          color:var(--chalk-dim);
+        ">
+          <span>Present: ${present}</span>
+          <span>Absent: ${total - present}</span>
+          <span>Total: ${total}</span>
+        </div>
+
+        <div style="
+          margin-top:10px;
+          padding:9px;
+          border-radius:8px;
+          background:var(--board-deep);
+          color:${safe ? "var(--green)" : "var(--coral)"};
+          font-weight:600;
+        ">
+          ${safe ? "🟢 SAFE" : "🔴 RISK"}
+        </div>
+
+        <div class="note" style="margin:8px 0 0;">
+          ${
+            safeBunks > 0
+              ? `You can bunk <strong>${safeBunks}</strong> more class${safeBunks === 1 ? "" : "es"} and stay at or above ${MIN}%.`
+              : `No additional bunk is safe while maintaining ${MIN}%.`
+          }
+        </div>
+
+        <div class="note" style="margin:5px 0 0;">
+          After 1 bunk: ${afterOne.toFixed(1)}%
+        </div>
+
+      </div>
+    `;
+  });
+
+  html += `
+    <div style="
+      display:flex;
+      gap:8px;
+      margin-top:14px;
+      margin-bottom:14px;
+    ">
+      <button
+        class="${bunkMode === "bunks" ? "btn-save" : "btn-ghost"}"
+        style="flex:1;"
+        onclick="bunkMode='bunks';render();">
+        Bunks
+      </button>
+
+      <button
+        class="${bunkMode === "future" ? "btn-save" : "btn-ghost"}"
+        style="flex:1;"
+        onclick="bunkMode='future';render();">
+        Future
+      </button>
+    </div>
+  `;
+
+  if (bunkMode === "future") {
+    html += `
+      <div style="
+        background:var(--board-dark);
+        border:1px solid var(--rail);
+        border-radius:10px;
+        padding:13px;
+      ">
+        <strong>Future Attendance</strong>
+
+        <label class="field" style="margin-top:10px;">
+          Classes you will attend
+          <input
+            type="number"
+            min="0"
+            value="${futureAttend}"
+            oninput="
+              futureAttend=Math.max(0,Number(this.value)||0);
+              render();
+            "
+          />
+        </label>
+
+        <label class="field" style="margin-top:10px;">
+          Classes you may bunk
+          <input
+            type="number"
+            min="0"
+            value="${futureBunk}"
+            oninput="
+              futureBunk=Math.max(0,Number(this.value)||0);
+              render();
+            "
+          />
+        </label>
+    `;
+
+    state.attendance.forEach(a => {
+      const present = Number(a.present || 0);
+      const total = Number(a.total || 0);
+
+      if (!total) return;
+
+      const futurePresent = present + futureAttend;
+      const futureTotal =
+        total + futureAttend + futureBunk;
+
+      const futurePct =
+        (futurePresent / futureTotal) * 100;
+
+      const safe = futurePct >= MIN;
+
+      html += `
+        <div style="
+          margin-top:12px;
+          padding:10px;
+          border-radius:8px;
+          background:var(--board-deep);
+        ">
+          <div style="
+            display:flex;
+            justify-content:space-between;
+          ">
+            <strong>${esc(a.subject)}</strong>
+
+            <strong style="
+              color:${safe ? "var(--green)" : "var(--coral)"};
+            ">
+              ${futurePct.toFixed(1)}%
+            </strong>
+          </div>
+
+          <div style="
+            margin-top:7px;
+            color:${safe ? "var(--green)" : "var(--coral)"};
+            font-weight:600;
+          ">
+            ${safe ? "🟢 SAFE" : "🔴 RISK"}
+          </div>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+
+  return html;
+}
   return (str || "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 function itemAnchor(key) { return "item-" + slugify(key); }
