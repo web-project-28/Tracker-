@@ -584,6 +584,7 @@ async function startPortalLogin() {
     } else {
       portalSessionCookie = data.sessionCookie || "";
       portalCaptchaImage = data.captchaImage || "";
+      portalCaptcha = data.captchaText || ""; // auto fill captcha
       portalStatus = "ready";
     }
   } catch (e) {
