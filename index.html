@@ -1091,6 +1091,7 @@ function render(){
     html += `<div class="warn">${ICONS.warn}<span>${esc(portalMessage)}</span></div>`;
   }
   html += renderAttendanceSubmit();
+  html += renderBunkManagement();
   html += renderQuickJump();
   html += renderMyPortal();
   document.getElementById("content").innerHTML = html;
