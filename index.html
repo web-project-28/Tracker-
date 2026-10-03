@@ -88,20 +88,59 @@
   details.portal-group .card { background:var(--board-deep); }
 
   .dash-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:10px; }
+  .account-wrap { position:relative; }
+  .account-btn svg { width:16px; height:16px; }
+  .account-btn { background:var(--board-deep); border:1px solid var(--rail-light); color:var(--chalk); border-radius:10px; padding:9px 12px; display:inline-flex; align-items:center; gap:8px; cursor:pointer; font-weight:600; }
+  .account-menu { position:absolute; right:0; top:calc(100% + 8px); z-index:1000; width:min(300px, calc(100vw - 32px)); background:var(--board-deep); border:1px solid var(--rail-light); border-radius:14px; padding:8px; box-shadow:0 18px 45px rgba(0,0,0,.35); }
+  .account-item { width:100%; text-align:left; background:transparent; border:0; color:var(--chalk); padding:11px 12px; border-radius:9px; cursor:pointer; display:flex; align-items:center; gap:10px; }
+  .account-item:hover,.account-item:active { background:var(--rail); }
+  .account-item.active { background:var(--rail-light); }
+  .account-row { display:flex; align-items:stretch; gap:5px; margin:2px 0; }
+  .account-row .account-item { flex:1; min-width:0; }
+  .account-delete { width:42px; flex:none; border:1px solid var(--rail-light); border-radius:9px; background:transparent; color:var(--coral); cursor:pointer; display:grid; place-items:center; }
+  .account-delete:hover,.account-delete:active { background:rgba(224,108,108,.12); }
+  .account-delete svg { width:17px; height:17px; }
+  .account-avatar { width:34px; height:34px; border-radius:50%; background:var(--yellow); color:var(--board-deep); display:grid; place-items:center; font-weight:800; flex:none; }
+  .account-name { flex:1; min-width:0; }
+  .account-name strong { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .account-name span { display:block; font-size:11px; color:var(--chalk-dim); margin-top:2px; }
+  .account-divider { height:1px; background:var(--rail); margin:6px 4px; }
+  .account-backdrop { position:fixed; inset:0; z-index:999; background:transparent; }
+
   ::selection { background:var(--yellow); color:var(--board-deep); }
   .marks-analytics{background:var(--board-dark);border:1px solid var(--rail);border-radius:var(--radius);padding:16px;margin-bottom:18px;}
   .marks-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 16px;}
   .marks-stat{background:var(--board-deep);border:1px solid var(--rail);border-radius:10px;padding:10px;text-align:center;}
   .marks-stat .v{font-size:20px;font-weight:700;color:var(--yellow);font-family:'IBM Plex Mono',monospace;}
   .marks-stat .l{font-size:10.5px;color:var(--chalk-dim);margin-top:3px;}
-  .marks-chart{display:grid;gap:10px;}
-  .marks-row{display:grid;grid-template-columns:minmax(90px,1.1fr) 2fr 48px;align-items:center;gap:8px;}
-  .marks-name{font-size:11.5px;color:var(--chalk);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .marks-track{height:12px;background:var(--rail);border-radius:99px;overflow:hidden;}
-  .marks-fill{height:100%;border-radius:99px;background:var(--yellow);min-width:2px;}
-  .marks-value{font:600 11px 'IBM Plex Mono',monospace;color:var(--chalk);text-align:right;}
+  .marks-lines{display:grid;gap:8px;}
+  .marks-subject-lines{border-top:1px solid var(--rail);padding-top:6px;}
+  .marks-line{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:28px;padding:3px 0;color:var(--chalk-dim);font-size:12px;border-bottom:1px dashed var(--rail-light);}
+  .marks-line:last-child{border-bottom:0;}
+  .marks-line.subject{font-size:14px;color:var(--chalk);font-weight:700;border-bottom:1px solid var(--rail);padding-bottom:5px;}
+  .marks-line.subject b{color:var(--yellow);font-family:'IBM Plex Mono',monospace;}
+  .marks-line>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .marks-line>span:last-child{display:flex;align-items:center;gap:7px;flex:none;font-family:'IBM Plex Mono',monospace;}
+  .marks-line b{color:var(--chalk);font-weight:700;}
+  .marks-line small{color:var(--chalk-dim);font-size:10px;min-width:45px;text-align:right;}
+
+  .marks-graph{background:var(--board-deep);border:1px solid var(--rail);border-radius:12px;padding:10px 10px 8px;overflow:hidden;}
+  .marks-graph-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;}
+  .marks-graph-title{font-size:14px;font-weight:700;color:var(--chalk);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .marks-graph-pct{font:700 14px 'IBM Plex Mono',monospace;color:var(--yellow);flex:none;}
+  .marks-graph svg{display:block;width:100%;height:150px;overflow:visible;}
+  .marks-graph-grid{stroke:var(--rail-light);stroke-width:1;opacity:.65;}
+  .marks-graph-line{fill:none;stroke:var(--yellow);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
+  .marks-graph-point{fill:var(--yellow);stroke:var(--board-deep);stroke-width:2;}
+  .marks-graph-label{fill:var(--chalk-dim);font-size:9px;font-family:'IBM Plex Mono',monospace;}
+  .marks-graph-value{fill:var(--chalk);font-size:9px;font-weight:700;font-family:'IBM Plex Mono',monospace;}
+  .marks-graph-axis{fill:var(--chalk-dim);font-size:8px;font-family:'IBM Plex Mono',monospace;}
   .marks-source{font-size:11px;color:var(--chalk-dim);margin-top:10px;}
   .marks-empty{font-size:12.5px;color:var(--chalk-dim);line-height:1.5;}
+  .mark-sheet-wrap{position:relative;overflow-x:auto;margin-bottom:10px;border:1px solid var(--rail);border-radius:8px;background:transparent;}
+  .mark-sheet-wrap > table{position:relative;z-index:1;}
+  .mark-sheet-watermark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;overflow:hidden;padding:0 18px;}
+  .mark-sheet-watermark span{display:block;font-size:clamp(28px,8vw,64px);font-weight:900;letter-spacing:3px;line-height:1.15;white-space:nowrap;color:var(--chalk);opacity:.13;text-transform:uppercase;text-align:center;max-width:96%;overflow:hidden;text-overflow:ellipsis;}
   @media(max-width:430px){.marks-summary{grid-template-columns:1fr 1fr 1fr}.marks-row{grid-template-columns:86px 1fr 44px;gap:6px}.marks-name{font-size:10.5px}}
 
 
@@ -119,6 +158,50 @@
   .tap-pop:active{transform:scale(.985)}
   @media(max-width:430px){.command-title{font-size:39px}.command-card{padding:24px 20px}}
 
+
+  /* Floating live bunk calculator */
+  #bunk-float-root{position:fixed;inset:0;z-index:9999;pointer-events:none;}
+  .bunk-fab{position:fixed;width:58px;height:58px;border-radius:50%;border:1px solid var(--rail-light);background:var(--yellow);color:var(--board-deep);box-shadow:0 8px 28px rgba(0,0,0,.38);display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;pointer-events:auto;user-select:none;-webkit-user-select:none;z-index:10000;}
+  .bunk-fab:active{cursor:grabbing;}
+  .bunk-fab svg{width:26px;height:26px;pointer-events:none;}
+  .bunk-fab-badge{position:absolute;right:-2px;bottom:-1px;min-width:18px;height:18px;padding:0 4px;border-radius:99px;background:var(--board-dark);border:1px solid var(--rail-light);color:var(--chalk);font:700 9px 'IBM Plex Mono',monospace;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+  .bunk-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.48);display:flex;align-items:flex-end;justify-content:center;padding:12px;pointer-events:auto;}
+  .bunk-modal{width:min(640px,100%);max-height:86vh;overflow:auto;background:radial-gradient(circle at 92% 4%,rgba(232,198,101,.12),transparent 28%),radial-gradient(circle at 5% 18%,rgba(103,211,151,.10),transparent 26%),var(--board);border:1px solid rgba(232,198,101,.28);border-radius:24px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.035);}
+  .bunk-modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;position:sticky;top:-16px;background:linear-gradient(180deg,var(--board) 82%,rgba(20,39,31,.88));padding:4px 0 10px;z-index:2;}
+  .bunk-modal-head h2{font-family:'Kalam',cursive;font-size:27px;margin:0;letter-spacing:.01em;text-shadow:0 0 18px rgba(232,198,101,.18);}
+  .bunk-modal-head p{font-size:11px;color:var(--chalk-dim);margin:2px 0 0;}
+  .bunk-refresh{width:36px;height:36px;border-radius:10px;border:1px solid var(--rail);background:var(--board-dark);color:var(--chalk);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center}.bunk-refresh:disabled{opacity:.55;cursor:default}.bunk-refresh.spin{animation:bunkspin .8s linear infinite}@keyframes bunkspin{to{transform:rotate(360deg)}}
+  .bunk-close{width:36px;height:36px;border-radius:10px;border:1px solid var(--rail);background:var(--board-dark);color:var(--chalk);font-size:20px;cursor:pointer;}
+  .bunk-live{font:600 10px 'IBM Plex Mono',monospace;color:#07150f;background:linear-gradient(135deg,#8fe5b2,#e8c665);box-shadow:0 0 14px rgba(143,229,178,.16);padding:5px 8px;border-radius:999px;white-space:nowrap;}
+  .bunk-card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(40,74,58,.92),rgba(12,31,23,.98));border:1px solid rgba(143,217,168,.22);border-radius:18px;padding:14px;margin-top:12px;box-shadow:0 10px 28px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.035);}.bunk-card:before{content:'';position:absolute;inset:0 auto 0 0;width:4px;background:linear-gradient(180deg,#8fe5b2,#e8c665);}.bunk-card:after{content:'';position:absolute;width:110px;height:110px;right:-48px;top:-48px;border-radius:50%;border:1px solid rgba(232,198,101,.16);box-shadow:0 0 0 12px rgba(232,198,101,.025),0 0 0 24px rgba(143,229,178,.02);pointer-events:none;}
+  .bunk-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .bunk-name{font-size:15px;font-weight:700;line-height:1.3;min-width:0;position:relative;z-index:1;}.bunk-course-code{display:inline-flex;align-items:center;gap:6px;}.bunk-course-code:before{content:'◆';font-size:7px;color:#e8c665;opacity:.9;}
+  .bunk-course-name{display:block;margin-top:3px;font-size:12px;font-weight:500;color:var(--chalk-dim);line-height:1.3;}
+  .bunk-pct{font:700 18px 'IBM Plex Mono',monospace;color:#07150f;background:linear-gradient(135deg,#e8c665,#8fe5b2);padding:8px 10px;border-radius:12px;white-space:nowrap;box-shadow:0 5px 16px rgba(0,0,0,.16);}
+  .bunk-track{height:9px;background:rgba(7,21,15,.72);border:1px solid rgba(143,217,168,.12);border-radius:99px;overflow:hidden;margin:12px 0 5px;box-shadow:inset 0 1px 4px rgba(0,0,0,.28);}
+  .bunk-fill{height:100%;background:linear-gradient(90deg,#f07878 0%,#e8c665 58%,#8fe5b2 100%);border-radius:99px;box-shadow:0 0 12px rgba(143,229,178,.28);transition:width .35s ease;}
+  .bunk-scale{display:flex;justify-content:space-between;font-size:10.5px;color:var(--chalk-dim);}
+  .bunk-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0 9px;}
+  .bunk-stat{background:rgba(40,74,58,.72);border:1px solid rgba(143,217,168,.12);border-radius:12px;padding:9px 8px;min-width:0;}
+  .bunk-stat .k{font-size:10.5px;color:var(--chalk-dim);margin-bottom:2px;}
+  .bunk-stat .v{font-size:19px;font-weight:700;color:var(--chalk);}
+  .bunk-stat.present .v{color:var(--green);}.bunk-stat.absent .v{color:var(--coral);}
+  .bunk-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+  .bunk-action{border:1px solid rgba(232,198,101,.18);border-radius:12px;background:linear-gradient(135deg,#e8c665,#d8ae4c);color:var(--board-deep);font-size:13.5px;font-weight:800;padding:10px 8px;cursor:pointer;min-height:42px;box-shadow:0 6px 18px rgba(232,198,101,.10);}.bunk-action:nth-child(2){background:linear-gradient(135deg,#8fe5b2,#62c98e);}.bunk-action:active{transform:translateY(1px) scale(.99);}
+  .bunk-result{margin-top:9px;background:linear-gradient(135deg,rgba(40,74,58,.52),rgba(7,21,15,.82));border:1px solid rgba(143,217,168,.20);border-radius:13px;padding:11px 12px;font-size:12px;line-height:1.5;color:var(--chalk-dim);box-shadow:inset 0 1px 0 rgba(255,255,255,.025);}
+  .bunk-result strong{color:var(--chalk);}
+  .future-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px;}
+  .future-stepper{font-size:10px;color:var(--chalk-dim);}.future-controls{display:grid;grid-template-columns:34px 1fr 34px;align-items:center;gap:6px;margin-top:4px;border:1px solid var(--rail-light);border-radius:10px;padding:4px;background:var(--board-deep);min-height:38px;box-sizing:border-box;}.future-controls strong{font:700 17px 'IBM Plex Mono',monospace;color:var(--chalk);text-align:center;}.future-controls button{border:0;border-radius:7px;min-height:30px;font-size:20px;line-height:1;background:var(--rail);color:var(--chalk);cursor:pointer;font-weight:700;}.future-controls button:active{transform:scale(.94);}.future-controls .future-plus{background:var(--yellow);color:var(--board-deep);}
+  .future-pct{font:700 23px 'IBM Plex Mono',monospace;color:#e8c665;margin-top:10px;text-shadow:0 0 14px rgba(232,198,101,.16);}
+  .future-bunk-status{margin-top:10px;padding:10px 11px;border:1px solid rgba(232,198,101,.28);border-radius:12px;line-height:1.45;font-size:12px;color:var(--chalk-dim);}
+  .future-bunk-status strong{font-size:13px;color:var(--chalk);}
+  .future-bunk-status span{display:inline-block;margin-top:3px;}
+  .future-bunk-ok{border-color:rgba(103,211,151,.35);background:linear-gradient(135deg,rgba(103,211,151,.10),rgba(7,21,15,.35));box-shadow:inset 0 0 24px rgba(103,211,151,.035);}
+  .future-bunk-ok strong{color:#79d99f;}
+  .future-bunk-no{border-color:rgba(230,103,103,.35);background:rgba(230,103,103,.06);}
+  .future-bunk-no strong{color:#f07878;}
+  .bunk-hero{position:relative;overflow:hidden;margin:2px 0 10px;padding:13px 14px;border:1px solid rgba(232,198,101,.20);border-radius:16px;background:linear-gradient(120deg,rgba(232,198,101,.10),rgba(143,229,178,.08) 55%,rgba(40,74,58,.20));}.bunk-hero:after{content:'75%';position:absolute;right:10px;top:-13px;font:900 62px 'IBM Plex Mono',monospace;color:rgba(232,198,101,.045);pointer-events:none;}.bunk-hero-title{font:800 11px 'IBM Plex Mono',monospace;letter-spacing:.13em;text-transform:uppercase;color:#e8c665;}.bunk-hero-copy{margin-top:4px;font-size:12px;color:var(--chalk-dim);max-width:82%;line-height:1.45}.bunk-legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.bunk-legend span{font:700 9px 'IBM Plex Mono',monospace;padding:4px 7px;border-radius:999px;background:rgba(7,21,15,.42);border:1px solid rgba(143,217,168,.13);color:var(--chalk-dim)}.bunk-legend .safe{color:#8fe5b2}.bunk-legend .danger{color:#f07878}.bunk-legend .target{color:#e8c665}.bunk-fab{background:conic-gradient(from 210deg,#e8c665,#8fe5b2,#6bb8e8,#e8c665);box-shadow:0 8px 28px rgba(0,0,0,.38),0 0 22px rgba(143,229,178,.16);}.bunk-fab:after{content:'';position:absolute;inset:4px;border-radius:50%;border:1px solid rgba(7,21,15,.24);pointer-events:none}@media(max-width:430px){.bunk-modal{border-radius:20px}.bunk-name{font-size:13.5px}.bunk-pct{font-size:17px}.bunk-stats{grid-template-columns:1fr 1fr}.bunk-hero{padding:12px}.bunk-hero-copy{max-width:86%}}
+
 </style>
 </head>
 <body>
@@ -131,6 +214,7 @@
   <div id="content"></div>
   <input type="file" id="fileInput" accept="image/*" multiple style="display:none" />
 </div>
+<div id="bunk-float-root"></div>
 
 <script>
 const STORAGE_KEY = "student-tracker-data-v1";
@@ -164,6 +248,30 @@ let portalSessionCookie = "";
 let portalStatus = ""; // "", "loading", "ready", "loggingin", "success", "error"
 let portalMessage = "";
 let loggedIn = false;
+let accountMenuOpen = false;
+const ACCOUNTS_KEY = "student-tracker-accounts-v1";
+const ACTIVE_ACCOUNT_KEY = "student-tracker-active-account-v1";
+let activeAccountKey = localStorage.getItem(ACTIVE_ACCOUNT_KEY) || "";
+let accounts = {};
+try { accounts = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || "{}"); } catch(e) { accounts = {}; }
+
+function accountKey(username){ return String(username || "").trim().toUpperCase(); }
+function saveAccounts(){ try { localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts)); } catch(e) {} }
+function accountLabel(key){ return accounts[key]?.label || accounts[key]?.username || key; }
+function accountInitial(key){ return (accountLabel(key).replace(/[^a-zA-Z0-9]/g, "").slice(0,1) || "A").toUpperCase(); }
+function saveCurrentAccount(){
+  if(!activeAccountKey) return;
+  accounts[activeAccountKey] = { ...(accounts[activeAccountKey]||{}), username: portalUsername || activeAccountKey, sessionCookie: portalSessionCookie || accounts[activeAccountKey]?.sessionCookie || "", label: accounts[activeAccountKey]?.label || portalUsername || activeAccountKey };
+  saveAccounts();
+  try { localStorage.setItem("student-tracker-state-"+activeAccountKey, JSON.stringify(state)); } catch(e) {}
+}
+function loadAccountState(key){
+  try {
+    const raw=localStorage.getItem("student-tracker-state-"+key);
+    if(raw) state=Object.assign({ timetable:[], assignments:[], exams:[], attendance:[], custom:{} }, JSON.parse(raw));
+    else state={ timetable:[], assignments:[], exams:[], attendance:[], custom:{} };
+  } catch(e) {}
+}
 let refreshing = false;
 let attendanceCode = "";
 let submittingAttendance = false;
@@ -172,6 +280,10 @@ let attendanceSuccess = false;
 let discovering = false;
 let discoverStatus = "";
 let pageLoadError = "";
+let bunkOpen = {};
+let bunkRefreshing = false;
+let bunkRefreshMessage = "";
+let futureOpen = {};
 
 function todayStr() {
   const d = new Date();
@@ -253,6 +365,7 @@ function save() {
 }
 
 const ICONS = {
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.2-6 8-6s6.5 2 8 6"/></svg>',
   calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
   list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>',
   cap:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5"/></svg>',
@@ -559,6 +672,89 @@ function removeCustomItem(category, id){
   save(); render();
 }
 
+function openAccountMenu(){ accountMenuOpen=true; render(); }
+function closeAccountMenu(){ accountMenuOpen=false; render(); }
+function addNewAccount(){
+  accountMenuOpen=false;
+  saveCurrentAccount();
+  loggedIn=false;
+  portalUsername=""; portalPassword=""; portalCaptcha=""; portalCaptchaImage=""; portalSessionCookie=""; portalStatus=""; portalMessage="";
+  portalPages={};
+  activeAccountKey="";
+  try{ localStorage.removeItem(ACTIVE_ACCOUNT_KEY); }catch(e){}
+  tab="myportal";
+  render();
+  startPortalLogin();
+}
+async function switchAccount(key){
+  if(!key || key===activeAccountKey){ accountMenuOpen=false; render(); return; }
+  saveCurrentAccount();
+  const acc=accounts[key];
+  if(!acc) return;
+  accountMenuOpen=false;
+  activeAccountKey=key;
+  try{ localStorage.setItem(ACTIVE_ACCOUNT_KEY,key); }catch(e){}
+  loadAccountState(key);
+  portalUsername=acc.username||key;
+  portalPassword="";
+  portalCaptcha="";
+  portalCaptchaImage="";
+  portalSessionCookie=acc.sessionCookie||"";
+  portalPages={};
+  portalMessage="Switching account…";
+  loggedIn=!!portalSessionCookie;
+  portalStatus=loggedIn?"success":"";
+  render();
+  if(loggedIn){
+    await refreshPortalData();
+    if(!Object.keys(portalPages).length){
+      // Session likely expired; start a fresh login for this saved account.
+      loggedIn=false; portalSessionCookie=""; accounts[key].sessionCookie=""; saveAccounts(); render(); startPortalLogin();
+    }
+  } else startPortalLogin();
+}
+function removeSavedAccount(key){
+  if(!accounts[key]) return;
+  if(!confirm("Delete this saved account and its data from this device?")) return;
+  const deletingActive = key===activeAccountKey;
+  delete accounts[key];
+  saveAccounts();
+  try { localStorage.removeItem("student-tracker-state-"+key); } catch(e) {}
+  if(deletingActive){
+    activeAccountKey="";
+    loggedIn=false;
+    portalUsername=""; portalPassword=""; portalCaptcha=""; portalCaptchaImage="";
+    portalSessionCookie=""; portalStatus=""; portalMessage=""; portalPages={};
+    try{localStorage.removeItem(ACTIVE_ACCOUNT_KEY)}catch(e){}
+    accountMenuOpen=false;
+    render();
+    startPortalLogin();
+    return;
+  }
+  accountMenuOpen=false;
+  render();
+}
+function renderAccountMenu(){
+  const keys=Object.keys(accounts);
+  const current=activeAccountKey;
+  let html=`<div class="account-backdrop" onclick="closeAccountMenu()"></div><div class="account-menu">`;
+  if(keys.length){
+    html+=keys.map(k=>`<div class="account-row">
+      <button type="button" class="account-item ${k===current?'active':''}" onclick='switchAccount(${JSON.stringify(k)})'>
+        <span class="account-avatar">${esc(accountInitial(k))}</span>
+        <span class="account-name"><strong>${esc(accountLabel(k))}</strong><span>${esc(accounts[k].username||k)}${k===current?' · Current':''}</span></span>
+      </button>
+      <button type="button" class="account-delete" title="Delete account" aria-label="Delete ${esc(accountLabel(k))}" onclick='event.stopPropagation();removeSavedAccount(${JSON.stringify(k)})'>${ICONS.trash || '🗑'}</button>
+    </div>`).join("");
+    html+=`<div class="account-divider"></div>`;
+  }
+  html+=`<button class="account-item" onclick="addNewAccount()"><span class="account-avatar">+</span><span class="account-name"><strong>Add new account</strong><span>Sign in with another SRM account</span></span></button>`;
+  html+=`<div class="account-divider"></div>`;
+  html+=`<button class="account-item" onclick="logoutPortal()"><span class="account-avatar" style="background:transparent;border:1px solid var(--rail-light);color:var(--chalk);">↪</span><span class="account-name"><strong>Logout</strong><span>Sign out of the current SRM account</span></span></button>`;
+  html+=`</div>`;
+  return html;
+}
+
 function renderPortal() {
   let html = `<div style="max-width:420px;margin:20px auto 0;">
     <p class="sub" style="text-align:center;">Log in with your real SRM portal credentials to load everything automatically.</p>
@@ -666,6 +862,11 @@ async function submitPortalLogin() {
     portalStatus = "success";
     portalMessage = "";
     loggedIn = true;
+    activeAccountKey = accountKey(portalUsername);
+    accounts[activeAccountKey] = { username: portalUsername, label: portalUsername, sessionCookie: portalSessionCookie };
+    saveAccounts();
+    try { localStorage.setItem(ACTIVE_ACCOUNT_KEY, activeAccountKey); } catch(e) {}
+    loadAccountState(activeAccountKey);
     tab = "myportal";
     refreshPortalData();
   } catch (e) {
@@ -688,21 +889,20 @@ async function refreshPortalData() {
 }
 
 function logoutPortal() {
-  const clearData = confirm("Log out? Tap OK to also clear the portal data loaded in this browser, or Cancel to keep it and just log out.");
+  saveCurrentAccount();
   loggedIn = false;
-  portalUsername = "";
   portalPassword = "";
   portalCaptcha = "";
   portalCaptchaImage = "";
   portalSessionCookie = "";
   portalStatus = "";
   portalMessage = "";
-  if (clearData) {
-    portalPages = {};
-    save();
-  }
+  portalPages = {};
+  accountMenuOpen = false;
   render();
+  startPortalLogin();
 }
+
 
 const SECTION_GROUPS = [
   { key: "academic", label: "Academic", match: /subject|time ?table|attendance|od\/?ml|course registration/i },
@@ -823,79 +1023,169 @@ function headerMax(header){
 }
 
 function extractMarksAnalytics(){
+  // SRM Internal Marks is structured differently from a normal subject-wise
+  // table: EACH SUBJECT is represented by its own mark-sheet table. The table
+  // header is typically "Name" + "Mark Secured(Conducted)" and the rows are
+  // assessment components such as Mid Semester, CLA 1, CLA 2, Lab Performance.
+  // Therefore we must NOT look for a subject name inside each row.
   const pages=getMarksPortalPages();
-  const subjects={};
-  const allEntries=[];
+  const attendance=liveAttendanceStats();
+  const subjectPool=(attendance.rows||[]).map(r=>({name:r.name}));
+  const rows=[];
+  let detectedSheets=0;
+
+  function norm(v){ return String(v??'').replace(/\s+/g,' ').trim(); }
+  function isMarkSheetHeader(header){
+    const h=header.map(x=>norm(x).toLowerCase());
+    const hasName=h.some(x=>/^(name|assessment|component|particulars?)$/.test(x));
+    const hasSecured=h.some(x=>/mark\s*secured\s*\(?\s*conducted\s*\)?|marks?\s*secured.*conducted|secured.*conducted/i.test(x));
+    const hasMark=h.some(x=>/mark|score|obtained|conducted|internal|assessment/i.test(x));
+    return hasName && (hasSecured || hasMark);
+  }
+  function findSecuredColumn(header){
+    const exact=header.findIndex(x=>/mark\s*secured\s*\(?\s*conducted\s*\)?|marks?\s*secured.*conducted|secured.*conducted/i.test(norm(x)));
+    if(exact>=0) return exact;
+    return header.findIndex(x=>/mark\s*secured|obtained|score/i.test(norm(x)));
+  }
+
   pages.forEach(page=>{
     (page.tables||[]).forEach(table=>{
-      if (!Array.isArray(table) || table.length<2) return;
-      const header=(table[0]||[]).map(x=>String(x??"").trim());
-      const lower=header.map(x=>x.toLowerCase());
-      let subjectIdx=lower.findIndex(x=>/subject|course\s*name|course\s*title|paper\s*name/.test(x));
-      if(subjectIdx<0) subjectIdx=header.findIndex((x,i)=>i>0 && /name/i.test(x));
-      if(subjectIdx<0) subjectIdx=1;
-      const markCols=[];
-      header.forEach((h,i)=>{
-        if(i===subjectIdx) return;
-        const hLower=h.toLowerCase();
-        if(/s\.?no|serial|code|course\s*code|credits?|semester|section|grade|rank|attendance/.test(hLower)) return;
-        const max=headerMax(h);
-        const looksMark=/mark|score|cia|internal|assessment|test|exam|quiz|mid|total|obtained|sessional|lab/.test(hLower);
-        if(looksMark || max!==null) markCols.push({i,max});
-      });
-      if(!markCols.length){
-        header.forEach((_,i)=>{ if(i!==subjectIdx) markCols.push({i,max:null}); });
+      if(!Array.isArray(table)||table.length<2) return;
+      const header=(table[0]||[]).map(norm);
+      if(!isMarkSheetHeader(header)) return;
+
+      const securedIdx=findSecuredColumn(header);
+      if(securedIdx<0) return;
+
+      const entries=[];
+      for(let r=1;r<table.length;r++){
+        const cells=(table[r]||[]).map(norm);
+        if(!cells.length) continue;
+        const component=cells[0]||'';
+        // Ignore rows which are clearly headers/labels rather than assessment data.
+        if(!component || /^(name|mark secured|total|percentage|assessment|component)$/i.test(component)) continue;
+
+        let parsed=cleanMarkNumber(cells[securedIdx]);
+        if(!parsed){
+          // Some portal variants expose the secured/conducted value in another
+          // mark column. Only accept an explicit ratio/percentage/number here.
+          for(let i=0;i<cells.length;i++){
+            if(i===0) continue;
+            const candidate=cleanMarkNumber(cells[i]);
+            if(candidate && (candidate.max!=null || /mark|score|obtained|conducted/i.test(header[i]||''))){
+              parsed=candidate;
+              break;
+            }
+          }
+        }
+        if(!parsed) continue;
+
+        // If the portal gives a bare secured number but the header contains the
+        // conducted maximum, recover the maximum from that header.
+        if(parsed.max==null){
+          const max=headerMax(header[securedIdx]);
+          if(max!=null){ parsed.max=max; parsed.pct=parsed.score/max*100; }
+        }
+        if(parsed.max==null || !Number.isFinite(parsed.pct)) continue;
+        if(parsed.score<0 || parsed.max<=0 || parsed.score>parsed.max) continue;
+        entries.push({score:parsed.score,max:parsed.max,pct:parsed.pct,component});
       }
-      table.slice(1).forEach(row=>{
-        if(!Array.isArray(row)) return;
-        const subject=String(row[subjectIdx]??"").trim();
-        if(!subject || /^[-–—]$/.test(subject)) return;
-        const values=[];
-        markCols.forEach(col=>{
-          const parsed=cleanMarkNumber(row[col.i]);
-          if(!parsed) return;
-          if(parsed.max==null && col.max!=null){ parsed.max=col.max; parsed.pct=parsed.score/col.max*100; }
-          if(parsed.score<0) return;
-          values.push(parsed);
-        });
-        if(!values.length) return;
-        if(!subjects[subject]) subjects[subject]={name:subject,entries:[],page:page.label||page.title||"Internal Marks"};
-        subjects[subject].entries.push(...values);
+
+      if(!entries.length) return;
+      detectedSheets++;
+      rows.push({
+        name:'',
+        entries,
+        page:page.label||page.title||'Internal Marks',
+        sheetIndex:detectedSheets-1
       });
     });
   });
-  Object.values(subjects).forEach(x=>{
-    const withPct=x.entries.filter(e=>Number.isFinite(e.pct));
-    x.avgPct=withPct.length ? withPct.reduce((a,e)=>a+e.pct,0)/withPct.length : null;
-    x.avgMark=x.entries.reduce((a,e)=>a+e.score,0)/x.entries.length;
+
+  // SRM presents the subject mark sheets in the same subject sequence as the
+  // Attendance Details page. Use those live attendance subject names as the
+  // canonical names instead of guessing from assessment rows like "CLA 1".
+  rows.forEach((sheet,i)=>{
+    sheet.name=subjectPool[i]?.name || '';
+  });
+
+  // If the portal exposed fewer attendance names than mark sheets, do not invent
+  // names. Keep only sheets that can be tied to a real live subject.
+  const validRows=rows.filter(x=>x.name);
+  validRows.forEach(x=>{
+    const totalScore=x.entries.reduce((a,e)=>a+e.score,0);
+    const totalMax=x.entries.reduce((a,e)=>a+e.max,0);
+    x.totalScore=totalScore;
+    x.totalMax=totalMax;
+    x.avgPct=totalMax>0 ? (totalScore/totalMax)*100 : null;
     x.count=x.entries.length;
   });
-  let rows=Object.values(subjects).filter(x=>x.count);
-  rows.sort((a,b)=> (b.avgPct??b.avgMark)-(a.avgPct??a.avgMark));
-  return {rows, pages};
+
+  validRows.sort((a,b)=>(b.avgPct??-Infinity)-(a.avgPct??-Infinity));
+  return {rows:validRows,pages,sheetsDetected:detectedSheets,subjectsAvailable:subjectPool.length};
 }
 
 function renderMarksAnalytics(){
   const data=extractMarksAnalytics();
   if(!data.pages.length) return "";
-  if(!data.rows.length) return `<div class="marks-analytics"><div style="font-weight:600;margin-bottom:4px;">Academic Performance</div><div class="marks-empty">Internal Marks loaded, but the table format was not recognizable as subject-wise marks yet. Refresh the Internal Marks section after the portal finishes loading.</div></div>`;
-  const pctRows=data.rows.filter(x=>x.avgPct!=null);
-  const usePct=pctRows.length>0;
-  const rows=usePct?pctRows:data.rows;
-  const highest=rows[0];
-  const lowest=rows[rows.length-1];
-  const avg=usePct ? rows.reduce((a,x)=>a+x.avgPct,0)/rows.length : rows.reduce((a,x)=>a+x.avgMark,0)/rows.length;
-  const maxBar=usePct?100:Math.max(...rows.map(x=>x.avgMark),1);
+  if(!data.rows.length) return `<div class="marks-analytics"><div style="font-weight:600;margin-bottom:4px;">Academic Performance</div><div class="marks-empty">Internal Marks loaded, but no valid subject mark sheets were detected yet. Refresh the Internal Marks section after the portal finishes loading.</div></div>`;
+
+  const rows=data.rows.filter(x=>x.entries && x.entries.length && x.avgPct!=null);
+  if(!rows.length) return `<div class="marks-analytics"><div style="font-weight:600;margin-bottom:4px;">Academic Performance</div><div class="marks-empty">Mark sheets were found, but no valid secured/conducted marks could be calculated yet.</div></div>`;
+
+  const highest=Math.max(...rows.map(x=>x.avgPct));
+  const average=rows.reduce((a,x)=>a+x.avgPct,0)/rows.length;
+  const fmt=n=>Number.isInteger(n)?String(n):Number(n).toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
+
+  // Compact line-only view: every detected assessment remains visible, but
+  // without graphs/cards that consume vertical space on a phone.
   return `<div class="marks-analytics">
-    <div class="section-head" style="margin-bottom:4px;"><div><h2 style="font-size:22px;">Academic Performance</h2><p>Graphical view of marks loaded from your portal</p></div></div>
+    <div class="section-head" style="margin-bottom:4px;">
+      <div><h2 style="font-size:22px;">Academic Performance</h2><p>All detected internal marks</p></div>
+    </div>
     <div class="marks-summary">
-      <div class="marks-stat"><div class="v">${usePct?avg.toFixed(1)+"%":avg.toFixed(1)}</div><div class="l">${usePct?"Average":"Average mark"}</div></div>
-      <div class="marks-stat"><div class="v">${usePct?highest.avgPct.toFixed(1)+"%":highest.avgMark.toFixed(1)}</div><div class="l">Highest</div></div>
+      <div class="marks-stat"><div class="v">${average.toFixed(2)}%</div><div class="l">Average</div></div>
+      <div class="marks-stat"><div class="v">${highest.toFixed(2)}%</div><div class="l">Highest</div></div>
       <div class="marks-stat"><div class="v">${rows.length}</div><div class="l">Subjects</div></div>
     </div>
-    <div class="marks-chart">${rows.map(x=>{const v=usePct?x.avgPct:x.avgMark;const width=Math.max(2,Math.min(100,(v/maxBar)*100));return `<div class="marks-row"><div class="marks-name" title="${esc(x.name)}">${esc(x.name)}</div><div class="marks-track"><div class="marks-fill" style="width:${width}%"></div></div><div class="marks-value">${usePct?v.toFixed(1)+"%":v.toFixed(1)}</div></div>`;}).join("")}</div>
-    <div class="marks-source">Source: ${esc(data.pages.map(p=>p.label||p.title).join(", "))}${!usePct?" · Bars are relative to the highest detected mark because the portal did not expose a common maximum." : ""}</div>
+    <div class="marks-lines">
+      ${rows.map(x=>`<div class="marks-subject-lines">
+        <div class="marks-line subject"><span>${esc(x.name)}</span><b>${x.avgPct.toFixed(2)}%</b></div>
+        ${x.entries.map(e=>`<div class="marks-line"><span>${esc(e.component)}</span><span><b>${fmt(e.score)} / ${fmt(e.max)}</b><small>${e.pct.toFixed(2)}%</small></span></div>`).join('')}
+      </div>`).join('')}
+    </div>
+    <div class="marks-source">Source: ${esc(data.pages.map(p=>p.label||p.title).join(", "))}. Every line represents a detected secured/conducted mark.</div>
   </div>`;
+}
+
+function getMarkSubjectNames(page){
+  // Prefer course-code-like headings from the portal text when the portal
+  // supplies them outside the actual marks tables.
+  const names=[];
+  const text=String(page?.text||'');
+  text.split(/\r?\n|\s{2,}/).map(x=>x.trim()).filter(Boolean).forEach(line=>{
+    const clean=line.replace(/\s+/g,' ').trim();
+    if(clean.length<2 || clean.length>80) return;
+    if(/^(internal marks?|name|mark secured|mark|conducted|total|obtained|assessment|mid semester|model exam|observation note|lab performance|cla \d+)$/i.test(clean)) return;
+    if(/^[A-Z]{2,6}\s*[-/]?\s*\d{2,4}(?:\s*[-:]\s*.*)?$/i.test(clean)) names.push(clean);
+  });
+  return [...new Set(names)];
+}
+
+function markWatermarkName(page, tableIndex){
+  // The marks tables themselves often contain only assessment names
+  // (Mid Semester, CLA, Lab Performance, etc.). The actual subject name
+  // comes from the live Attendance table, where SRM exposes the course name.
+  try {
+    const live=liveAttendanceStats();
+    if(live.rows && live.rows[tableIndex]?.name) return live.rows[tableIndex].name;
+  } catch(e) {}
+
+  // If Attendance is unavailable, use explicit course-code headings from
+  // the same portal page, but never use assessment-row names as a subject.
+  const textNames=getMarkSubjectNames(page);
+  if(textNames[tableIndex]) return textNames[tableIndex];
+  return '';
 }
 
 function renderMyPortal() {
@@ -934,13 +1224,15 @@ function renderMyPortal() {
             </button>
           </div>`;
         if (page.tables && page.tables.length > 0) {
-          page.tables.forEach(table => {
+          page.tables.forEach((table, tableIndex) => {
             const rows = table.slice(0, 12); // keep it readable, avoid huge dumps
-            html += `<div style="overflow-x:auto;margin-bottom:10px;border:1px solid var(--rail);border-radius:8px;"><table style="width:100%;border-collapse:collapse;font-size:12px;">`;
+            const isMarksPage=/internal\s*marks?|marks?|assessment|cia|sessional/i.test(String(page.label||page.title||''));
+            const watermarkName=isMarksPage ? markWatermarkName(page, tableIndex) : '';
+            html += `<div class="mark-sheet-wrap"><table style="width:100%;border-collapse:collapse;font-size:12px;position:relative;z-index:1;">`;
             rows.forEach((row, i) => {
               html += `<tr>${row.map(cell => `<td style="border-bottom:1px solid var(--rail);padding:7px 10px;color:${i===0?'var(--yellow)':'var(--chalk)'};font-weight:${i===0?600:400};">${esc(cell)}</td>`).join("")}</tr>`;
             });
-            html += `</table></div>`;
+            html += `</table>${watermarkName ? `<div class="mark-sheet-watermark"><span>${esc(watermarkName)}</span></div>` : ''}</div>`;
             if (table.length > 12) html += `<p class="meta">+ ${table.length-12} more rows</p>`;
           });
         } else if (page.text && page.text.trim()) {
@@ -1224,124 +1516,318 @@ function indiaClockHTML(){
   return `<span class="india-clock"><span class="india-dot"></span>India · ${get('hour')}:${get('minute')}:${get('second')} ${get('dayPeriod')}</span>`;
 }
 function liveAttendanceStats(){
-  // Read ONLY the dedicated live SRM Attendance section. Never fall back to
-  // manually tracked attendance or Today's Attendance, so dashboard numbers
-  // can never be fabricated from unrelated data.
-  const pages=Object.values(portalPages);
-  const page=pages.find(p=>String(p.label||'').trim().toLowerCase()==='attendance')
-    || pages.find(p=>/^(?!today'?s?\s+attendance$).*attendance/i.test(String(p.label||'').trim()));
-  if(!page || !Array.isArray(page.tables)) return {avg:null,highest:null,lowest:null,count:0,source:false};
+  // Use ONLY the actual SRM Attendance subject table.
+  // SRM's live attendance table reports:
+  //   Classes Conducted = TOTAL
+  //   Attendance Entered (Slots) = PRESENT
+  //   Attendance Not Entered (Slots) = ABSENT
+  // We deliberately require all three columns so unrelated tables/text on the
+  // Attendance page cannot create a fake "Least attendance" value.
+  const pages=Object.values(portalPages||{});
+  const page=pages.find(p=>String(p?.label||'').trim().toLowerCase()==='attendance')
+    || pages.find(p=>/^(?!today'?s?\s+attendance$).*attendance/i.test(String(p?.label||'').trim()));
+  if(!page || !Array.isArray(page.tables)) return {avg:null,highest:null,lowest:null,count:0,source:false,rows:[]};
 
+  const clean=v=>String(v??'').replace(/\s+/g,' ').trim();
+  const num=v=>{const m=clean(v).replace(/,/g,'').match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):null;};
   const records=[];
-  const cleanText=v=>String(v??'').replace(/\s+/g,' ').trim();
-  const numeric=v=>{
-    const m=cleanText(v).replace(/,/g,'').match(/-?\d+(?:\.\d+)?/);
-    return m ? Number(m[0]) : null;
-  };
-  const isSubjectHeader=h=>/subject|course\s*(name|title)?|paper\s*(name|title)?|course\s*code/i.test(h);
-  const isPctHeader=h=>/^(?:attendance|attendance\s*(?:%|percentage|percent))$|percentage|percent|%/i.test(h);
-  const isPresentHeader=h=>/present|attended|classes\s*attended/i.test(h) && !/percentage|%/i.test(h);
-  const isTotalHeader=h=>/total|conducted|classes\s*held|working\s*days/i.test(h) && !/percentage|%/i.test(h);
-  const ignoredSubject=/^(?:attendance|today'?s\s*attendance|subject|course|course\s*name|name|s\.?no\.?|serial|code|total|present|absent|percentage|%|remarks?)$/i;
 
   for(const table of page.tables){
-    if(!Array.isArray(table) || !table.length) continue;
-    const header=(table[0]||[]).map(cleanText);
-    const lower=header.map(x=>x.toLowerCase());
-    const subjectIdx=lower.findIndex(isSubjectHeader);
-    const pctIdx=lower.findIndex(isPctHeader);
-    const presentIdx=lower.findIndex(isPresentHeader);
-    const totalIdx=lower.findIndex(isTotalHeader);
-    const hasUsefulHeader=subjectIdx>=0 || pctIdx>=0 || presentIdx>=0 || totalIdx>=0;
+    if(!Array.isArray(table)||table.length<2) continue;
+    const header=(table[0]||[]).map(clean);
+    const h=header.map(x=>x.toLowerCase());
 
-    for(let r=hasUsefulHeader?1:0;r<table.length;r++){
-      const row=table[r];
-      if(!Array.isArray(row) || !row.length) continue;
-      const cells=row.map(cleanText);
-      if(cells.every(x=>!x)) continue;
+    // Match the three actual SRM attendance columns. Do NOT use generic
+    // "total"/"present" heuristics here because the page can contain other
+    // tables whose numbers have nothing to do with attendance.
+    const totalIdx=h.findIndex(x=>/classes\s*conducted|conducted\s*classes/i.test(x));
+    const presentIdx=h.findIndex(x=>/attendance\s*entered|entered\s*\(?slots?\)?/i.test(x));
+    const absentIdx=h.findIndex(x=>/attendance\s*not\s*entered|not\s*entered/i.test(x));
+    if(totalIdx<0 || presentIdx<0 || absentIdx<0) continue;
 
-      let name='';
-      if(subjectIdx>=0) name=cells[subjectIdx]||'';
+    // Subject is normally the first descriptive column. If a subject/course
+    // header exists, prefer it; otherwise use the first non-numeric cell.
+    let subjectIdx=h.findIndex(x=>/subject|course\s*(name|title)?|paper\s*(name|title)?/i.test(x));
+    if(subjectIdx<0){
+      subjectIdx=header.findIndex((x,i)=>i!==totalIdx&&i!==presentIdx&&i!==absentIdx&&x && !/s\.?no\.?|serial|sl\.?\s*no/i.test(x));
+    }
+
+    for(let r=1;r<table.length;r++){
+      const cells=(table[r]||[]).map(clean);
+      if(!cells.length || cells.every(x=>!x)) continue;
+
+      const total=num(cells[totalIdx]);
+      const present=num(cells[presentIdx]);
+      const absent=num(cells[absentIdx]);
+      if(!Number.isFinite(total)||!Number.isFinite(present)||!Number.isFinite(absent)) continue;
+      if(total<=0 || present<0 || absent<0 || present>total) continue;
+      // This is the strongest guard against unrelated numeric tables.
+      if(Math.abs((present+absent)-total)>1e-9) continue;
+
+      let name=subjectIdx>=0?clean(cells[subjectIdx]):'';
       if(!name){
-        // Some SRM tables put the subject in the first meaningful text cell.
-        name=cells.find((x,i)=>x && !/^\d+(?:\.\d+)?(?:\s*\/\s*\d+(?:\.\d+)?)?%?$/.test(x) && !ignoredSubject.test(x)) || '';
+        name=cells.find((x,i)=>i!==totalIdx&&i!==presentIdx&&i!==absentIdx&&x && !/^[-+]?\d+(?:\.\d+)?(?:\s*\/\s*[-+]?\d+(?:\.\d+)?)?%?$/.test(x))||'';
       }
-      name=name.replace(/\s+/g,' ').trim();
-      if(!name || ignoredSubject.test(name)) continue;
+      name=clean(name);
+      if(!name || /^(attendance|today'?s\s*attendance|subject|course|name|s\.?no\.?|serial|code|total|present|absent|percentage|%|remarks?)$/i.test(name)) continue;
 
-      let pct=null, present=null, total=null;
-      if(pctIdx>=0 && cells[pctIdx]){
-        const m=cells[pctIdx].match(/(-?\d+(?:\.\d+)?)\s*%?/);
-        if(m) pct=Number(m[1]);
-      }
-      if(presentIdx>=0) present=numeric(cells[presentIdx]);
-      if(totalIdx>=0) total=numeric(cells[totalIdx]);
-      if(pct==null && present!=null && total!=null && total>0 && present>=0 && present<=total){
-        pct=present/total*100;
-      }
-
-      // Header-less tables: locate an explicit ratio (present/total), or a
-      // percentage-looking cell. Only accept values in the valid attendance range.
-      if(pct==null){
-        for(const cell of cells){
-          const ratio=cell.match(/(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/);
-          if(ratio){
-            const a=Number(ratio[1]), b=Number(ratio[2]);
-            if(b>0 && a>=0 && a<=b){ pct=a/b*100; present=a; total=b; break; }
-          }
-          const pm=cell.match(/^(\d+(?:\.\d+)?)\s*%$/);
-          if(pm){ pct=Number(pm[1]); break; }
-        }
-      }
-      // If the portal exposes a bare numeric percentage column with no % sign,
-      // use it only when the row/header clearly identifies it as percentage.
-      if(pct==null && pctIdx<0 && hasUsefulHeader){
-        const candidate=cells.map((x,i)=>({x,i,n:numeric(x)})).find(o=>o.n!=null && o.n>=0 && o.n<=100 && /percentage|percent|attendance|%/i.test(header[o.i]||''));
-        if(candidate) pct=candidate.n;
-      }
-      if(Number.isFinite(pct) && pct>=0 && pct<=100){
-        records.push({pct,name,present,total});
-      }
+      records.push({name,pct:(present/total)*100,present,total,absent});
     }
   }
 
-  // Avoid duplicate copies of the same subject row if the portal repeats a
-  // table/header. Keep distinct percentages for the same subject when the
-  // portal genuinely reports multiple attendance entries.
-  const dedup=[];
-  const seen=new Set();
+  // If the portal repeats the same subject row, keep one real attendance row.
+  // Prefer the row with the largest conducted-class count; that avoids an
+  // old/partial duplicate masking the current subject attendance.
+  const byName=new Map();
   for(const r of records){
-    const key=`${r.name.toLowerCase()}|${r.pct.toFixed(4)}|${r.present??''}|${r.total??''}`;
-    if(!seen.has(key)){seen.add(key);dedup.push(r);}
+    const key=r.name.toLowerCase().replace(/\s+/g,' ').trim();
+    const old=byName.get(key);
+    if(!old || r.total>old.total) byName.set(key,r);
   }
-  // Some SRM responses expose the attendance table as text instead of
-  // structured cells. If structured rows produced nothing, parse only lines
-  // that contain a subject-like label plus an explicit percentage/ratio.
-  if(!dedup.length && typeof page.text==='string'){
-    const lines=page.text.split(/\r?\n/).map(cleanText).filter(Boolean);
-    for(const line of lines){
-      const pm=line.match(/(\d+(?:\.\d+)?)\s*%/);
-      const rm=line.match(/(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/);
-      let pct=null;
-      if(pm) pct=Number(pm[1]);
-      else if(rm && Number(rm[2])>0 && Number(rm[1])<=Number(rm[2])) pct=Number(rm[1])/Number(rm[2])*100;
-      if(pct==null || pct<0 || pct>100) continue;
-      const label=line.replace(pm?pm[0]:rm[0],'').replace(/^[|:;,\-\s]+|[|:;,\-\s]+$/g,'').trim();
-      if(label && !ignoredSubject.test(label) && !/^\d/.test(label)){
-        dedup.push({pct,name:label,present:null,total:null});
+  const rows=[...byName.values()];
+  if(!rows.length) return {avg:null,highest:null,lowest:null,count:0,source:true,rows:[]};
+
+  const avg=rows.reduce((sum,x)=>sum+x.pct,0)/rows.length;
+  const highest=rows.reduce((a,x)=>x.pct>a.pct?x:a);
+  const lowest=rows.reduce((a,x)=>x.pct<a.pct?x:a);
+  return {avg,highest,lowest,count:rows.length,source:true,rows};
+}
+
+function getLiveCourseNameMap(){
+  const map={};
+  const pages=Object.values(portalPages||{});
+  const page=pages.find(p=>String(p?.label||'').trim().toLowerCase()==='subjects')
+    || pages.find(p=>/subject/i.test(String(p?.label||p?.title||'')));
+  if(!page) return map;
+  const norm=v=>String(v??'').replace(/\s+/g,' ').trim();
+  const codeRe=/^[A-Z]{2,8}\s*[-/]?\s*\d{2,4}$/i;
+  const cleanCode=v=>norm(v).replace(/\s*[-/]\s*/g,' ').replace(/\s+/g,' ').trim().toUpperCase();
+  const bad=/^(course\s*(code|name)?|subject|subject\s*name|name|code|s\.?no\.?|serial|sl\.?\s*no\.?|credits?|type|category|semester)$/i;
+  for(const table of (page.tables||[])){
+    if(!Array.isArray(table)||table.length<2) continue;
+    const header=(table[0]||[]).map(norm);
+    const lower=header.map(x=>x.toLowerCase());
+    let codeIdx=lower.findIndex(x=>/course\s*code|subject\s*code|paper\s*code|^code$/.test(x));
+    let nameIdx=lower.findIndex(x=>/course\s*(name|title)|subject\s*(name|title)|paper\s*(name|title)|^subject$/.test(x));
+    for(let r=1;r<table.length;r++){
+      const cells=(table[r]||[]).map(norm);
+      if(!cells.length) continue;
+      let code=codeIdx>=0?cleanCode(cells[codeIdx]):'';
+      if(!code || !codeRe.test(code)){
+        const c=cells.find(x=>codeRe.test(cleanCode(x)));
+        code=c?cleanCode(c):'';
       }
+      if(!code) continue;
+      let name=nameIdx>=0?norm(cells[nameIdx]):'';
+      if(!name || bad.test(name) || codeRe.test(name)){
+        name=cells.find(x=>x && !codeRe.test(cleanCode(x)) && !bad.test(x) && !/^[-+]?\d+(?:\.\d+)?$/.test(x));
+      }
+      if(name) map[code]=name;
     }
   }
-  if(!dedup.length) return {avg:null,highest:null,lowest:null,count:0,source:true};
-  const avg=dedup.reduce((sum,x)=>sum+x.pct,0)/dedup.length;
-  const highest=dedup.reduce((a,x)=>x.pct>a.pct?x:a);
-  const lowest=dedup.reduce((a,x)=>x.pct<a.pct?x:a);
-  return {avg,highest,lowest,count:dedup.length,source:true};
+  // A few portal responses expose the subject list only as text.
+  if(typeof page.text==='string'){
+    const lines=page.text.split(/\r?\n/).map(norm).filter(Boolean);
+    for(let i=0;i<lines.length;i++){
+      const code=cleanCode(lines[i]);
+      if(!codeRe.test(code)) continue;
+      const next=lines[i+1];
+      if(next && !bad.test(next) && !codeRe.test(cleanCode(next)) && !/^[-+]?\d+(?:\.\d+)?$/.test(next)) map[code]=next;
+    }
+  }
+  return map;
+}
+function displayBunkSubject(row, subjectMap){
+  const raw=String(row?.name||'').replace(/\s+/g,' ').trim();
+  const code=raw.match(/^[A-Z]{2,8}\s*[-/]?\s*\d{2,4}$/i)?.[0]||raw;
+  const key=code.replace(/\s*[-/]\s*/g,' ').replace(/\s+/g,' ').trim().toUpperCase();
+  const name=subjectMap[key]||subjectMap[raw.toUpperCase()]||'';
+  return {code,name:name&&name.toUpperCase()!==key?name:''};
+}
+
+function bunkKey(row){ return slugify(row.name)+'-'+String(row.pct).replace(/\./g,'_'); }
+function maxSafeBunks(row,minPct=75){
+  if(!Number.isFinite(row.present)||!Number.isFinite(row.total)||row.total<=0) return null;
+  return Math.max(0,Math.floor(row.present/(minPct/100)-row.total+1e-9));
+}
+function classesNeededToReach(row,minPct=75){
+  if(!Number.isFinite(row.present)||!Number.isFinite(row.total)||row.total<=0) return null;
+  if(row.present/row.total>=minPct/100) return 0;
+  return Math.ceil(((minPct/100)*row.total-row.present)/(1-minPct/100)-1e-9);
+}
+function futureAttendance(row,attend,skip){
+  if(!Number.isFinite(row.present)||!Number.isFinite(row.total)||row.total<=0) return null;
+  const a=Math.max(0,Math.floor(Number(attend)||0)),s=Math.max(0,Math.floor(Number(skip)||0));
+  return ((row.present+a)/(row.total+a+s))*100;
+}
+async function refreshBunkAttendance(){
+  if(bunkRefreshing) return;
+  const entries=Object.entries(portalPages||{});
+  const found=entries.find(([k,p])=>String(p?.label||"").trim().toLowerCase()==="attendance")
+    || entries.find(([k,p])=>/^(?!today'?s\s+attendance$).*attendance/i.test(String(p?.label||"").trim()));
+  if(!found){
+    bunkRefreshMessage="Live Attendance section is not loaded yet. Refresh the connected Attendance section first.";
+    renderBunkFloat();
+    return;
+  }
+  const [key,page]=found;
+  bunkRefreshing=true;
+  bunkRefreshMessage="";
+  renderBunkFloat();
+  try{
+    const pageData=await fetchPortalPage(page.url,page.postBody);
+    portalPages[key]={...page,title:pageData.title,tables:pageData.tables,text:pageData.text};
+    save();
+    bunkRefreshMessage="Attendance data refreshed just now.";
+  }catch(e){
+    bunkRefreshMessage="Couldn’t refresh Attendance: "+(e?.message||"Unknown error");
+  }finally{
+    bunkRefreshing=false;
+    renderBunkFloat();
+  }
+}
+function toggleBunkPlan(key){bunkOpen[key]=!bunkOpen[key];renderBunkFloat();}
+function toggleFuturePlan(key){futureOpen[key]=!futureOpen[key];renderBunkFloat();}
+function futureBunkStatus(row,attend,skip,minPct=75){
+  if(!Number.isFinite(row?.present)||!Number.isFinite(row?.total)||row.total<=0) return null;
+  const a=Math.max(0,Math.floor(Number(attend)||0));
+  const s=Math.max(0,Math.floor(Number(skip)||0));
+  const present=row.present+a;
+  const total=row.total+a+s;
+  const pct=(present/total)*100;
+  const projected={present,total,pct,absent:total-present};
+  if(pct>=minPct){
+    const safe=Math.max(0,Math.floor(present/(minPct/100)-total+1e-9));
+    return {projected,safe,need:0,ok:true};
+  }
+  const need=Math.ceil(((minPct/100)*total-present)/(1-minPct/100)-1e-9);
+  return {projected,safe:0,need:Math.max(0,need),ok:false};
+}
+function futureStatusHTML(row,attend,skip){
+  const st=futureBunkStatus(row,attend,skip);
+  if(!st) return '<div class="future-bunk-status">Future bunk status unavailable.</div>';
+  if(st.ok){
+    return `<div class="future-bunk-status future-bunk-ok"><strong>✓ ${st.safe>0?`You can skip ${st.safe} more class${st.safe===1?'':'es'}`:'No more bunks'}</strong> while staying at or above 75%.<br><span>Projected attendance: ${st.projected.pct.toFixed(2)}%</span></div>`;
+  }
+  return `<div class="future-bunk-status future-bunk-no"><strong>✕ No bunks after this plan.</strong><br>Projected attendance: ${st.projected.pct.toFixed(2)}%. Attend the next <strong>${st.need}</strong> class${st.need===1?'':'es'} to reach 75%.</div>`;
+}
+function updateFuturePreview(key,attend,skip){
+  const row=(liveAttendanceStats().rows||[]).find(r=>bunkKey(r)===key); if(!row)return;
+  const a=Math.max(0,Math.floor(Number(attend)||0));
+  const s=Math.max(0,Math.floor(Number(skip)||0));
+  const pct=futureAttendance(row,a,s); const out=document.getElementById('future-'+key); const note=document.getElementById('future-note-'+key); const status=document.getElementById('future-status-'+key);
+  const attendValue=document.getElementById('attend-value-'+key), skipValue=document.getElementById('skip-value-'+key);
+  if(attendValue)attendValue.textContent=a;
+  if(skipValue)skipValue.textContent=s;
+  if(out)out.textContent=pct==null?'—':pct.toFixed(2)+'%';
+  if(note)note.textContent=pct==null?'Future attendance unavailable.':`After those future classes, your attendance would be ${pct.toFixed(2)}%.`;
+  if(status)status.innerHTML=futureStatusHTML(row,a,s);
+}
+function changeFutureCount(key,type,delta){
+  const el=document.getElementById((type==='attend'?'attend-value-':'skip-value-')+key);
+  if(!el)return;
+  const current=Math.max(0,Math.floor(Number(el.textContent)||0));
+  const next=Math.max(0,current+(Number(delta)||0));
+  const other=document.getElementById((type==='attend'?'skip-value-':'attend-value-')+key);
+  const attend=type==='attend'?next:Math.max(0,Math.floor(Number(other?.textContent)||0));
+  const skip=type==='skip'?next:Math.max(0,Math.floor(Number(other?.textContent)||0));
+  updateFuturePreview(key,attend,skip);
+}
+function closeBunkCalculator(){const root=document.getElementById('bunk-float-root');if(root)root.dataset.open='0';renderBunkFloat();}
+function renderBunkCalculatorModal(){
+  const data=liveAttendanceStats(),rows=data.rows||[];
+  const subjectMap=getLiveCourseNameMap();
+  let html=`<div class="bunk-modal-backdrop" onclick="if(event.target===this)closeBunkCalculator()"><div class="bunk-modal">
+    <div class="bunk-modal-head"><div><h2>Bunk Calculator</h2><p>Calculated from your live SRM Attendance table · <span class="bunk-live">LIVE DATA</span></p></div><div style="display:flex;gap:6px;align-items:center"><button class="bunk-refresh${bunkRefreshing?' spin':''}" onclick="refreshBunkAttendance()" ${bunkRefreshing?'disabled':''} aria-label="Refresh live attendance" title="Refresh live attendance">↻</button><button class="bunk-close" onclick="closeBunkCalculator()" aria-label="Close">×</button></div></div>`;
+  html+=`<div class="bunk-hero"><div class="bunk-hero-title">⚡ Live Bunk Command Center</div><div class="bunk-hero-copy">Know exactly what you can miss, what you must attend, and where your 75% safety line sits.</div><div class="bunk-legend"><span class="safe">● SAFE</span><span class="target">● 75% TARGET</span><span class="danger">● AT RISK</span></div></div>`;
+  if(bunkRefreshMessage){html+=`<div class="bunk-result"><strong>${esc(bunkRefreshMessage)}</strong></div>`;}
+  if(!rows.length){html+=`<div class="bunk-result"><strong>No live attendance rows found.</strong><br>Refresh the connected SRM Attendance section first.</div>`;}
+  rows.forEach(row=>{
+    const key=bunkKey(row),pct=row.pct,canSkip=maxSafeBunks(row),absent=row.absent??(row.total-row.present);
+    const subject=displayBunkSubject(row,subjectMap);
+    html+=`<div class="bunk-card"><div class="bunk-top"><div class="bunk-name"><span class="bunk-course-code">${esc(subject.code)}</span>${subject.name?`<span class="bunk-course-name">${esc(subject.name)}</span>`:''}</div><div class="bunk-pct">${pct.toFixed(2)}%</div></div>
+      <div class="bunk-track"><div class="bunk-fill" style="width:${Math.min(100,Math.max(0,pct))}%"></div></div>
+      <div class="bunk-scale"><span>Min: 75%</span><span>Current: ${pct.toFixed(2)}%</span></div>
+      <div class="bunk-stats"><div class="bunk-stat present"><div class="k">Present</div><div class="v">${row.present??'—'}</div></div><div class="bunk-stat absent"><div class="k">Absent</div><div class="v">${absent??'—'}</div></div><div class="bunk-stat"><div class="k">Total</div><div class="v">${row.total??'—'}</div></div><div class="bunk-stat"><div class="k">Can Skip</div><div class="v">${canSkip??'—'}</div></div></div>
+      <div class="bunk-actions"><button class="bunk-action" onclick="toggleBunkPlan('${key}')">Plan Bunks</button><button class="bunk-action" onclick="toggleFuturePlan('${key}')">Future</button></div>`;
+    if(bunkOpen[key]){
+      html+=`<div class="bunk-result">`;
+      if(canSkip==null) html+=`<strong>Exact limit unavailable.</strong> This row does not contain both conducted and entered counts.`;
+      else if(canSkip===0&&pct<75){const need=classesNeededToReach(row);html+=`<strong>Currently below 75%.</strong> Attend the next <strong>${need}</strong> class${need===1?'':'es'} before considering a skip.`;}
+      else html+=`<strong>Can skip ${canSkip} class${canSkip===1?'':'es'}</strong> and remain at or above 75%.<br>Math: ${row.present} ÷ (${row.total} + ${canSkip}) × 100 = <strong>${futureAttendance(row,0,canSkip).toFixed(2)}%</strong>`;
+      html+=`</div>`;
+    }
+    if(futureOpen[key]){
+      html+=`<div class="bunk-result"><strong>Future attendance & bunk check</strong><div class="future-grid"><div class="future-stepper"><span>Attend</span><div class="future-controls"><button type="button" class="future-minus" onclick="changeFutureCount('${key}','attend',-1)" aria-label="Remove one attended class">−</button><strong id="attend-value-${key}">1</strong><button type="button" class="future-plus" onclick="changeFutureCount('${key}','attend',1)" aria-label="Add one attended class">+</button></div></div><div class="future-stepper"><span>Skip</span><div class="future-controls"><button type="button" class="future-minus" onclick="changeFutureCount('${key}','skip',-1)" aria-label="Remove one skipped class">−</button><strong id="skip-value-${key}">0</strong><button type="button" class="future-plus" onclick="changeFutureCount('${key}','skip',1)" aria-label="Add one skipped class">+</button></div></div></div><div id="future-${key}" class="future-pct">${futureAttendance(row,1,0).toFixed(2)}%</div><div id="future-note-${key}">After those future classes, your attendance would be ${futureAttendance(row,1,0).toFixed(2)}%.</div><div id="future-status-${key}">${futureStatusHTML(row,1,0)}</div></div>`;
+    }
+    html+=`</div>`;
+  });
+  html+=`<div class="bunk-result"><strong>Live formula:</strong> Present = Attendance Entered · Total = Classes Conducted · Absent = Attendance Not Entered. Safe bunk limit keeps attendance at or above 75%.</div></div></div>`;
+  return html;
+}
+function renderBunkFloat(){
+  const root=document.getElementById('bunk-float-root'); if(!root)return;
+  if(!loggedIn){root.innerHTML='';return;}
+  const open=root.dataset.open==='1';
+  if(open){root.innerHTML=renderBunkCalculatorModal();return;}
+  root.innerHTML=`<button id="bunk-fab" class="bunk-fab" aria-label="Open live bunk calculator" title="Live Bunk Calculator"><span>${ICONS.calculator||'▣'}</span><span class="bunk-fab-badge">BUNK</span></button>`;
+  const fab=document.getElementById('bunk-fab');
+  const saved=JSON.parse(localStorage.getItem('bunk-fab-position-v1')||'null');
+  if(saved&&Number.isFinite(saved.x)&&Number.isFinite(saved.y)){fab.style.left=Math.max(6,Math.min(innerWidth-64,saved.x))+'px';fab.style.top=Math.max(60,Math.min(innerHeight-70,saved.y))+'px';}
+  else{fab.style.right='14px';fab.style.bottom='88px';}
+  // Fully free drag: works with touch, mouse and Android WebView.
+  let dragging=false,moved=false,dx=0,dy=0,startX=0,startY=0,pointerId=null;
+  const point=(e)=>{
+    if(e.touches&&e.touches.length){return {x:e.touches[0].clientX,y:e.touches[0].clientY};}
+    return {x:e.clientX,y:e.clientY};
+  };
+  const beginDrag=(e)=>{
+    if(e.type==='mousedown'&&e.button!==0)return;
+    const p=point(e),r=fab.getBoundingClientRect();
+    dragging=true;moved=false;pointerId=e.pointerId??null;
+    startX=p.x;startY=p.y;dx=p.x-r.left;dy=p.y-r.top;
+    fab.style.right='auto';fab.style.bottom='auto';fab.style.cursor='grabbing';
+    if(fab.setPointerCapture&&e.pointerId!=null){try{fab.setPointerCapture(e.pointerId);}catch(_){}}
+    if(e.cancelable)e.preventDefault();
+  };
+  const moveDrag=(e)=>{
+    if(!dragging)return;
+    if(e.pointerId!=null&&pointerId!=null&&e.pointerId!==pointerId)return;
+    const p=point(e),r=fab.getBoundingClientRect();
+    if(Math.abs(p.x-startX)>3||Math.abs(p.y-startY)>3)moved=true;
+    const x=Math.max(6,Math.min(window.innerWidth-r.width-6,p.x-dx));
+    const y=Math.max(56,Math.min(window.innerHeight-r.height-6,p.y-dy));
+    fab.style.left=x+'px';fab.style.top=y+'px';
+    if(e.cancelable)e.preventDefault();
+  };
+  const endDrag=(e)=>{
+    if(!dragging)return;
+    if(e.pointerId!=null&&pointerId!=null&&e.pointerId!==pointerId)return;
+    dragging=false;pointerId=null;fab.style.cursor='grab';
+    const r=fab.getBoundingClientRect();
+    localStorage.setItem('bunk-fab-position-v1',JSON.stringify({x:r.left,y:r.top}));
+    if(e.cancelable)e.preventDefault();
+    if(!moved){root.dataset.open='1';renderBunkFloat();}
+  };
+  // Pointer events (modern browsers/WebView).
+  fab.addEventListener('pointerdown',beginDrag,{passive:false});
+  fab.addEventListener('pointermove',moveDrag,{passive:false});
+  fab.addEventListener('pointerup',endDrag,{passive:false});
+  fab.addEventListener('pointercancel',endDrag,{passive:false});
+  // Touch fallback for WebViews where pointer events can be unreliable.
+  fab.addEventListener('touchstart',beginDrag,{passive:false});
+  fab.addEventListener('touchmove',moveDrag,{passive:false});
+  fab.addEventListener('touchend',endDrag,{passive:false});
+  fab.addEventListener('touchcancel',endDrag,{passive:false});
+  // Mouse fallback for desktop browsers.
+  fab.addEventListener('mousedown',beginDrag,{passive:false});
+  document.addEventListener('mousemove',moveDrag,{passive:false});
+  document.addEventListener('mouseup',endDrag,{passive:false});
 }
 
 function renderStudentDashboard(){
   const a=liveAttendanceStats();
-  const fmt=v=>v==null?'—':v.toFixed(1)+'%';
+  const fmt=v=>v==null?'—':v.toFixed(2)+'%';
   return `<div class="command-card">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
       <div><div class="command-kicker">LIVE STUDENT COMMAND CENTER</div><div class="command-title">Your<br>campus,<br>mapped.</div><div class="command-sub">Real portal sections + personal tracker data in one dashboard.</div></div>
@@ -1365,7 +1851,10 @@ function render(){
   document.getElementById("tabs").innerHTML = ""; // single view now -- no tab bar needed
   let html = `<div class="dash-header">
     <button class="btn-add" onclick="refreshPortalData()" ${refreshing?"disabled":""}>${ICONS.sparkles} ${refreshing?"Refreshing…":"Refresh"}</button>
-    <button class="btn-ghost" onclick="logoutPortal()" style="border:1px solid var(--rail);border-radius:8px;color:var(--coral);">Log out</button>
+    <div class="account-wrap">
+      <button class="account-btn" onclick="${accountMenuOpen?'closeAccountMenu()':'openAccountMenu()'}">${ICONS.user || '◉'} <span>${esc(accountLabel(activeAccountKey || accountKey(portalUsername) || 'Account'))}</span> ▾</button>
+      ${accountMenuOpen ? renderAccountMenu() : ''}
+    </div>
   </div>`;
   if (portalMessage) {
     html += `<div class="warn">${ICONS.warn}<span>${esc(portalMessage)}</span></div>`;
@@ -1377,11 +1866,20 @@ function render(){
   html += renderMarksAnalytics();
   html += renderMyPortal();
   document.getElementById("content").innerHTML = html;
+  renderBunkFloat();
 }
 
 load();
+if(activeAccountKey && accounts[activeAccountKey]){
+  loadAccountState(activeAccountKey);
+  portalUsername=accounts[activeAccountKey].username||activeAccountKey;
+  portalSessionCookie=accounts[activeAccountKey].sessionCookie||"";
+  loggedIn=!!portalSessionCookie;
+  portalStatus=loggedIn?"success":"";
+}
 render();
-if (!loggedIn && !portalStatus) startPortalLogin();
+if (loggedIn) refreshPortalData();
+else if (!portalStatus) startPortalLogin();
 setInterval(()=>{ if(loggedIn){ document.querySelectorAll('.india-clock').forEach(el=>{ const holder=el.parentElement; if(holder) { const tmp=document.createElement('span'); tmp.innerHTML=indiaClockHTML(); el.replaceWith(tmp.firstElementChild); } }); } },1000);
 checkAndNotify(false);
 setInterval(() => checkAndNotify(false), 60 * 60 * 1000); // re-check hourly while the app stays open
