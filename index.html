@@ -89,6 +89,36 @@
 
   .dash-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:10px; }
   ::selection { background:var(--yellow); color:var(--board-deep); }
+  .marks-analytics{background:var(--board-dark);border:1px solid var(--rail);border-radius:var(--radius);padding:16px;margin-bottom:18px;}
+  .marks-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 16px;}
+  .marks-stat{background:var(--board-deep);border:1px solid var(--rail);border-radius:10px;padding:10px;text-align:center;}
+  .marks-stat .v{font-size:20px;font-weight:700;color:var(--yellow);font-family:'IBM Plex Mono',monospace;}
+  .marks-stat .l{font-size:10.5px;color:var(--chalk-dim);margin-top:3px;}
+  .marks-chart{display:grid;gap:10px;}
+  .marks-row{display:grid;grid-template-columns:minmax(90px,1.1fr) 2fr 48px;align-items:center;gap:8px;}
+  .marks-name{font-size:11.5px;color:var(--chalk);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .marks-track{height:12px;background:var(--rail);border-radius:99px;overflow:hidden;}
+  .marks-fill{height:100%;border-radius:99px;background:var(--yellow);min-width:2px;}
+  .marks-value{font:600 11px 'IBM Plex Mono',monospace;color:var(--chalk);text-align:right;}
+  .marks-source{font-size:11px;color:var(--chalk-dim);margin-top:10px;}
+  .marks-empty{font-size:12.5px;color:var(--chalk-dim);line-height:1.5;}
+  @media(max-width:430px){.marks-summary{grid-template-columns:1fr 1fr 1fr}.marks-row{grid-template-columns:86px 1fr 44px;gap:6px}.marks-name{font-size:10.5px}}
+
+
+  .india-clock{display:inline-flex;align-items:center;gap:8px;background:var(--board-dark);border:1px solid var(--rail);border-radius:999px;padding:9px 14px;color:var(--chalk-dim);font:500 12px 'IBM Plex Mono',monospace;white-space:nowrap}
+  .india-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block}
+  .command-card{background:linear-gradient(135deg,#284a3a,#14271f);border:1px solid var(--rail-light);border-radius:22px;padding:28px 24px;margin:18px 0 22px;}
+  .command-kicker{font-weight:700;letter-spacing:.14em;color:#9fe0bb;font-size:13px;line-height:1.7;text-transform:uppercase;max-width:170px}
+  .command-title{font-family:'Kalam',cursive;font-size:43px;line-height:1.05;margin:16px 0;color:var(--chalk)}
+  .command-sub{color:var(--chalk-dim);font-size:15px;line-height:1.55;max-width:260px}
+  .command-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+  .command-stat{background:rgba(10,25,19,.5);border:1px solid var(--rail);border-radius:14px;padding:16px}
+  .command-stat .v{font:700 25px 'IBM Plex Mono',monospace;color:var(--chalk)}
+  .command-stat .l{font-size:12px;color:var(--chalk-dim);margin-top:5px}
+  .tap-pop{transition:transform .18s ease}
+  .tap-pop:active{transform:scale(.985)}
+  @media(max-width:430px){.command-title{font-size:39px}.command-card{padding:24px 20px}}
+
 </style>
 </head>
 <body>
@@ -552,7 +582,7 @@ function renderPortal() {
       <input type="text" value="${esc(portalCaptcha)}" oninput="portalCaptcha=this.value" autocomplete="off" autocapitalize="off" placeholder="Captcha text" />
     </label>`;
   } else {
-    html += `<button class="btn-add" onclick="startPortalLogin()">${ICONS.sparkles} Load captcha</button>`;
+    html += `<p class="note" style="margin:0;">Preparing secure SRM sign-in automatically…</p>`;
   }
 
   html += `<div class="form-actions">
@@ -592,6 +622,16 @@ async function startPortalLogin() {
     portalMessage = "Couldn't reach the backend: " + e.message;
   }
   render();
+  if (portalStatus === "ready") autoSubmitPortalLogin();
+}
+
+async function autoSubmitPortalLogin(){
+  await new Promise(r=>setTimeout(r,350));
+  const userEl=document.querySelector('input[placeholder="e.g. AP2511XXXXXX"]');
+  const passEl=document.querySelector('input[placeholder="Your portal password"]');
+  if(userEl && userEl.value) portalUsername=userEl.value.trim();
+  if(passEl && passEl.value) portalPassword=passEl.value;
+  if(portalUsername && portalPassword && portalCaptcha) await submitPortalLogin();
 }
 
 async function submitPortalLogin() {
@@ -756,6 +796,106 @@ function jumpTo(anchorId) {
     if (parentDetails) parentDetails.open = true;
     setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "start" }), 30);
   }
+}
+
+function getMarksPortalPages(){
+  return Object.values(portalPages).filter(p => {
+    const label = `${p.label||""} ${p.title||""}`.toLowerCase();
+    return /internal\s*marks?|marks?|assessment|cia|sessional/.test(label);
+  });
+}
+
+function cleanMarkNumber(value){
+  const s = String(value ?? "").trim();
+  if (!s || /^(na|n\/a|-|absent|ab)$/i.test(s)) return null;
+  const ratio = s.match(/(-?\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/);
+  if (ratio) return {score:Number(ratio[1]), max:Number(ratio[2]), pct:Number(ratio[1])/Number(ratio[2])*100};
+  const pct = s.match(/^(-?\d+(?:\.\d+)?)\s*%$/);
+  if (pct) return {score:Number(pct[1]), max:100, pct:Number(pct[1])};
+  if (/^-?\d+(?:\.\d+)?$/.test(s)) return {score:Number(s), max:null, pct:null};
+  return null;
+}
+
+function headerMax(header){
+  const s=String(header||"");
+  const m=s.match(/(?:out\s*of|\/|max(?:imum)?|total)\s*[:=]?\s*(\d+(?:\.\d+)?)/i);
+  return m ? Number(m[1]) : null;
+}
+
+function extractMarksAnalytics(){
+  const pages=getMarksPortalPages();
+  const subjects={};
+  const allEntries=[];
+  pages.forEach(page=>{
+    (page.tables||[]).forEach(table=>{
+      if (!Array.isArray(table) || table.length<2) return;
+      const header=(table[0]||[]).map(x=>String(x??"").trim());
+      const lower=header.map(x=>x.toLowerCase());
+      let subjectIdx=lower.findIndex(x=>/subject|course\s*name|course\s*title|paper\s*name/.test(x));
+      if(subjectIdx<0) subjectIdx=header.findIndex((x,i)=>i>0 && /name/i.test(x));
+      if(subjectIdx<0) subjectIdx=1;
+      const markCols=[];
+      header.forEach((h,i)=>{
+        if(i===subjectIdx) return;
+        const hLower=h.toLowerCase();
+        if(/s\.?no|serial|code|course\s*code|credits?|semester|section|grade|rank|attendance/.test(hLower)) return;
+        const max=headerMax(h);
+        const looksMark=/mark|score|cia|internal|assessment|test|exam|quiz|mid|total|obtained|sessional|lab/.test(hLower);
+        if(looksMark || max!==null) markCols.push({i,max});
+      });
+      if(!markCols.length){
+        header.forEach((_,i)=>{ if(i!==subjectIdx) markCols.push({i,max:null}); });
+      }
+      table.slice(1).forEach(row=>{
+        if(!Array.isArray(row)) return;
+        const subject=String(row[subjectIdx]??"").trim();
+        if(!subject || /^[-–—]$/.test(subject)) return;
+        const values=[];
+        markCols.forEach(col=>{
+          const parsed=cleanMarkNumber(row[col.i]);
+          if(!parsed) return;
+          if(parsed.max==null && col.max!=null){ parsed.max=col.max; parsed.pct=parsed.score/col.max*100; }
+          if(parsed.score<0) return;
+          values.push(parsed);
+        });
+        if(!values.length) return;
+        if(!subjects[subject]) subjects[subject]={name:subject,entries:[],page:page.label||page.title||"Internal Marks"};
+        subjects[subject].entries.push(...values);
+      });
+    });
+  });
+  Object.values(subjects).forEach(x=>{
+    const withPct=x.entries.filter(e=>Number.isFinite(e.pct));
+    x.avgPct=withPct.length ? withPct.reduce((a,e)=>a+e.pct,0)/withPct.length : null;
+    x.avgMark=x.entries.reduce((a,e)=>a+e.score,0)/x.entries.length;
+    x.count=x.entries.length;
+  });
+  let rows=Object.values(subjects).filter(x=>x.count);
+  rows.sort((a,b)=> (b.avgPct??b.avgMark)-(a.avgPct??a.avgMark));
+  return {rows, pages};
+}
+
+function renderMarksAnalytics(){
+  const data=extractMarksAnalytics();
+  if(!data.pages.length) return "";
+  if(!data.rows.length) return `<div class="marks-analytics"><div style="font-weight:600;margin-bottom:4px;">Academic Performance</div><div class="marks-empty">Internal Marks loaded, but the table format was not recognizable as subject-wise marks yet. Refresh the Internal Marks section after the portal finishes loading.</div></div>`;
+  const pctRows=data.rows.filter(x=>x.avgPct!=null);
+  const usePct=pctRows.length>0;
+  const rows=usePct?pctRows:data.rows;
+  const highest=rows[0];
+  const lowest=rows[rows.length-1];
+  const avg=usePct ? rows.reduce((a,x)=>a+x.avgPct,0)/rows.length : rows.reduce((a,x)=>a+x.avgMark,0)/rows.length;
+  const maxBar=usePct?100:Math.max(...rows.map(x=>x.avgMark),1);
+  return `<div class="marks-analytics">
+    <div class="section-head" style="margin-bottom:4px;"><div><h2 style="font-size:22px;">Academic Performance</h2><p>Graphical view of marks loaded from your portal</p></div></div>
+    <div class="marks-summary">
+      <div class="marks-stat"><div class="v">${usePct?avg.toFixed(1)+"%":avg.toFixed(1)}</div><div class="l">${usePct?"Average":"Average mark"}</div></div>
+      <div class="marks-stat"><div class="v">${usePct?highest.avgPct.toFixed(1)+"%":highest.avgMark.toFixed(1)}</div><div class="l">Highest</div></div>
+      <div class="marks-stat"><div class="v">${rows.length}</div><div class="l">Subjects</div></div>
+    </div>
+    <div class="marks-chart">${rows.map(x=>{const v=usePct?x.avgPct:x.avgMark;const width=Math.max(2,Math.min(100,(v/maxBar)*100));return `<div class="marks-row"><div class="marks-name" title="${esc(x.name)}">${esc(x.name)}</div><div class="marks-track"><div class="marks-fill" style="width:${width}%"></div></div><div class="marks-value">${usePct?v.toFixed(1)+"%":v.toFixed(1)}</div></div>`;}).join("")}</div>
+    <div class="marks-source">Source: ${esc(data.pages.map(p=>p.label||p.title).join(", "))}${!usePct?" · Bars are relative to the highest detected mark because the portal did not expose a common maximum." : ""}</div>
+  </div>`;
 }
 
 function renderMyPortal() {
@@ -1076,6 +1216,146 @@ async function extractFromShots(){
   }
 }
 
+
+function indiaClockHTML(){
+  const now=new Date();
+  const parts=new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).formatToParts(now);
+  const get=k=>parts.find(p=>p.type===k)?.value||'';
+  return `<span class="india-clock"><span class="india-dot"></span>India · ${get('hour')}:${get('minute')}:${get('second')} ${get('dayPeriod')}</span>`;
+}
+function liveAttendanceStats(){
+  // Read ONLY the dedicated live SRM Attendance section. Never fall back to
+  // manually tracked attendance or Today's Attendance, so dashboard numbers
+  // can never be fabricated from unrelated data.
+  const pages=Object.values(portalPages);
+  const page=pages.find(p=>String(p.label||'').trim().toLowerCase()==='attendance')
+    || pages.find(p=>/^(?!today'?s?\s+attendance$).*attendance/i.test(String(p.label||'').trim()));
+  if(!page || !Array.isArray(page.tables)) return {avg:null,highest:null,lowest:null,count:0,source:false};
+
+  const records=[];
+  const cleanText=v=>String(v??'').replace(/\s+/g,' ').trim();
+  const numeric=v=>{
+    const m=cleanText(v).replace(/,/g,'').match(/-?\d+(?:\.\d+)?/);
+    return m ? Number(m[0]) : null;
+  };
+  const isSubjectHeader=h=>/subject|course\s*(name|title)?|paper\s*(name|title)?|course\s*code/i.test(h);
+  const isPctHeader=h=>/^(?:attendance|attendance\s*(?:%|percentage|percent))$|percentage|percent|%/i.test(h);
+  const isPresentHeader=h=>/present|attended|classes\s*attended/i.test(h) && !/percentage|%/i.test(h);
+  const isTotalHeader=h=>/total|conducted|classes\s*held|working\s*days/i.test(h) && !/percentage|%/i.test(h);
+  const ignoredSubject=/^(?:attendance|today'?s\s*attendance|subject|course|course\s*name|name|s\.?no\.?|serial|code|total|present|absent|percentage|%|remarks?)$/i;
+
+  for(const table of page.tables){
+    if(!Array.isArray(table) || !table.length) continue;
+    const header=(table[0]||[]).map(cleanText);
+    const lower=header.map(x=>x.toLowerCase());
+    const subjectIdx=lower.findIndex(isSubjectHeader);
+    const pctIdx=lower.findIndex(isPctHeader);
+    const presentIdx=lower.findIndex(isPresentHeader);
+    const totalIdx=lower.findIndex(isTotalHeader);
+    const hasUsefulHeader=subjectIdx>=0 || pctIdx>=0 || presentIdx>=0 || totalIdx>=0;
+
+    for(let r=hasUsefulHeader?1:0;r<table.length;r++){
+      const row=table[r];
+      if(!Array.isArray(row) || !row.length) continue;
+      const cells=row.map(cleanText);
+      if(cells.every(x=>!x)) continue;
+
+      let name='';
+      if(subjectIdx>=0) name=cells[subjectIdx]||'';
+      if(!name){
+        // Some SRM tables put the subject in the first meaningful text cell.
+        name=cells.find((x,i)=>x && !/^\d+(?:\.\d+)?(?:\s*\/\s*\d+(?:\.\d+)?)?%?$/.test(x) && !ignoredSubject.test(x)) || '';
+      }
+      name=name.replace(/\s+/g,' ').trim();
+      if(!name || ignoredSubject.test(name)) continue;
+
+      let pct=null, present=null, total=null;
+      if(pctIdx>=0 && cells[pctIdx]){
+        const m=cells[pctIdx].match(/(-?\d+(?:\.\d+)?)\s*%?/);
+        if(m) pct=Number(m[1]);
+      }
+      if(presentIdx>=0) present=numeric(cells[presentIdx]);
+      if(totalIdx>=0) total=numeric(cells[totalIdx]);
+      if(pct==null && present!=null && total!=null && total>0 && present>=0 && present<=total){
+        pct=present/total*100;
+      }
+
+      // Header-less tables: locate an explicit ratio (present/total), or a
+      // percentage-looking cell. Only accept values in the valid attendance range.
+      if(pct==null){
+        for(const cell of cells){
+          const ratio=cell.match(/(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/);
+          if(ratio){
+            const a=Number(ratio[1]), b=Number(ratio[2]);
+            if(b>0 && a>=0 && a<=b){ pct=a/b*100; present=a; total=b; break; }
+          }
+          const pm=cell.match(/^(\d+(?:\.\d+)?)\s*%$/);
+          if(pm){ pct=Number(pm[1]); break; }
+        }
+      }
+      // If the portal exposes a bare numeric percentage column with no % sign,
+      // use it only when the row/header clearly identifies it as percentage.
+      if(pct==null && pctIdx<0 && hasUsefulHeader){
+        const candidate=cells.map((x,i)=>({x,i,n:numeric(x)})).find(o=>o.n!=null && o.n>=0 && o.n<=100 && /percentage|percent|attendance|%/i.test(header[o.i]||''));
+        if(candidate) pct=candidate.n;
+      }
+      if(Number.isFinite(pct) && pct>=0 && pct<=100){
+        records.push({pct,name,present,total});
+      }
+    }
+  }
+
+  // Avoid duplicate copies of the same subject row if the portal repeats a
+  // table/header. Keep distinct percentages for the same subject when the
+  // portal genuinely reports multiple attendance entries.
+  const dedup=[];
+  const seen=new Set();
+  for(const r of records){
+    const key=`${r.name.toLowerCase()}|${r.pct.toFixed(4)}|${r.present??''}|${r.total??''}`;
+    if(!seen.has(key)){seen.add(key);dedup.push(r);}
+  }
+  // Some SRM responses expose the attendance table as text instead of
+  // structured cells. If structured rows produced nothing, parse only lines
+  // that contain a subject-like label plus an explicit percentage/ratio.
+  if(!dedup.length && typeof page.text==='string'){
+    const lines=page.text.split(/\r?\n/).map(cleanText).filter(Boolean);
+    for(const line of lines){
+      const pm=line.match(/(\d+(?:\.\d+)?)\s*%/);
+      const rm=line.match(/(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/);
+      let pct=null;
+      if(pm) pct=Number(pm[1]);
+      else if(rm && Number(rm[2])>0 && Number(rm[1])<=Number(rm[2])) pct=Number(rm[1])/Number(rm[2])*100;
+      if(pct==null || pct<0 || pct>100) continue;
+      const label=line.replace(pm?pm[0]:rm[0],'').replace(/^[|:;,\-\s]+|[|:;,\-\s]+$/g,'').trim();
+      if(label && !ignoredSubject.test(label) && !/^\d/.test(label)){
+        dedup.push({pct,name:label,present:null,total:null});
+      }
+    }
+  }
+  if(!dedup.length) return {avg:null,highest:null,lowest:null,count:0,source:true};
+  const avg=dedup.reduce((sum,x)=>sum+x.pct,0)/dedup.length;
+  const highest=dedup.reduce((a,x)=>x.pct>a.pct?x:a);
+  const lowest=dedup.reduce((a,x)=>x.pct<a.pct?x:a);
+  return {avg,highest,lowest,count:dedup.length,source:true};
+}
+
+function renderStudentDashboard(){
+  const a=liveAttendanceStats();
+  const fmt=v=>v==null?'—':v.toFixed(1)+'%';
+  return `<div class="command-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+      <div><div class="command-kicker">LIVE STUDENT COMMAND CENTER</div><div class="command-title">Your<br>campus,<br>mapped.</div><div class="command-sub">Real portal sections + personal tracker data in one dashboard.</div></div>
+      ${indiaClockHTML()}
+    </div>
+    <div class="command-grid">
+      <div class="command-stat"><div class="v">${fmt(a.avg)}</div><div class="l">Attendance average</div></div>
+      <div class="command-stat"><div class="v">${fmt(a.highest?.pct)}</div><div class="l">Highest attendance${a.highest?.name?` · ${esc(a.highest.name)}`:''}</div></div>
+      <div class="command-stat"><div class="v">${fmt(a.lowest?.pct)}</div><div class="l">Least attendance${a.lowest?.name?` · ${esc(a.lowest.name)}`:''}</div></div>
+      <div class="command-stat"><div class="v">${Object.keys(portalPages).length}</div><div class="l">Live portal sections</div></div>
+    </div>
+  </div>`;
+}
+
 function render(){
   if (!loggedIn) {
     document.getElementById("tabs").innerHTML = "";
@@ -1090,14 +1370,19 @@ function render(){
   if (portalMessage) {
     html += `<div class="warn">${ICONS.warn}<span>${esc(portalMessage)}</span></div>`;
   }
+  html += `<div style="display:flex;justify-content:flex-end;margin:4px 0 8px;">${indiaClockHTML()}</div>`;
+  html += renderStudentDashboard();
   html += renderAttendanceSubmit();
   html += renderQuickJump();
+  html += renderMarksAnalytics();
   html += renderMyPortal();
   document.getElementById("content").innerHTML = html;
 }
 
 load();
 render();
+if (!loggedIn && !portalStatus) startPortalLogin();
+setInterval(()=>{ if(loggedIn){ document.querySelectorAll('.india-clock').forEach(el=>{ const holder=el.parentElement; if(holder) { const tmp=document.createElement('span'); tmp.innerHTML=indiaClockHTML(); el.replaceWith(tmp.firstElementChild); } }); } },1000);
 checkAndNotify(false);
 setInterval(() => checkAndNotify(false), 60 * 60 * 1000); // re-check hourly while the app stays open
 </script>
