@@ -12,6 +12,7 @@
 <link rel="manifest" href='data:application/manifest+json,{"name":"Your Term, Mapped","short_name":"Term Tracker","start_url":".","display":"standalone","background_color":"%231F3B2E","theme_color":"%231F3B2E"}' />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   :root{
     --board:#1F3B2E; --board-dark:#16291F; --board-deep:#122019; --chalk:#F3F0E4; --chalk-dim:#9FB3A8;
@@ -20,10 +21,15 @@
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color:transparent; }
   body { margin:0; background:var(--board); font-family:'Inter',sans-serif; color:var(--chalk); line-height:1.4; }
-  .wrap { max-width:640px; margin:0 auto; padding:24px 18px 72px; }
+  .wrap { max-width:430px; margin:0 auto; padding:18px 14px 56px; }
   header.app-head { margin-bottom:22px; }
   h1 { font-family:'Kalam',cursive; font-size:32px; margin:0 0 6px; line-height:1.15; }
   .sub { color:var(--chalk-dim); font-size:13.5px; margin:0; max-width:46ch; }
+  .theme-switch{display:flex;align-items:center;justify-content:center;width:100%;margin-top:12px;padding:0;gap:0;overflow:visible;}
+  .theme-btn{position:relative;flex:0 0 22px;width:22px;height:22px;min-width:22px;margin:0;padding:0;border:2px solid rgba(255,255,255,.35);border-radius:50%!important;background:var(--bulb)!important;color:transparent;font-size:0;cursor:pointer;display:block;box-sizing:border-box;transition:transform .12s,box-shadow .12s,filter .12s;box-shadow:0 0 5px var(--bulb),inset 0 0 5px rgba(255,255,255,.35);}
+  .theme-btn::after{content:'';position:absolute;left:50%;top:3px;width:7px;height:4px;transform:translateX(-50%);border-radius:50%;background:rgba(255,255,255,.8);filter:blur(.2px);}
+  .theme-btn.active{filter:brightness(1.18);transform:scale(1.22);z-index:2;outline:2px solid rgba(255,255,255,.9);outline-offset:1px;box-shadow:0 0 12px var(--bulb),0 0 20px var(--bulb),inset 0 0 7px rgba(255,255,255,.5);}
+  .theme-btn span{display:none;}
 
   nav#tabs { display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding:2px 2px 14px; margin-bottom:18px; border-bottom:1px solid var(--rail); scrollbar-width:none; }
   nav#tabs::-webkit-scrollbar { display:none; }
@@ -87,9 +93,33 @@
   details.portal-group .group-body { padding:0 14px 14px; }
   details.portal-group .card { background:var(--board-deep); }
 
-  .dash-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:10px; }
-  .account-wrap { position:relative; }
+  .dash-header { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:12px; width:100%; }
+  .account-wrap { position:relative; min-width:0; }
+  .top-actions { display:contents; }
+  .help-btn { width:38px; height:38px; border-radius:11px; border:1px solid var(--rail-light); background:var(--board-deep); color:var(--yellow); font-weight:900; font-size:18px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,.18); }
+  .help-btn:hover { transform:translateY(-1px); border-color:var(--yellow); }
+  .contact-btn { height:36px; padding:0 8px; border-radius:11px; border:1px solid var(--rail-light); background:var(--board-deep); color:var(--yellow); font-weight:800; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,.18); }
+  .contact-btn:hover { transform:translateY(-1px); border-color:var(--yellow); }
+  .session-notice-overlay { position:fixed; inset:0; z-index:6000; background:rgba(0,0,0,.72); display:flex; align-items:center; justify-content:center; padding:18px; }
+  .session-notice { width:min(420px,100%); background:var(--board); border:1px solid var(--yellow); border-radius:18px; padding:20px; box-shadow:0 20px 70px rgba(0,0,0,.5); text-align:center; }
+  .session-notice-icon { width:52px; height:52px; margin:0 auto 12px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--board-deep); color:var(--yellow); font-size:25px; font-weight:900; }
+  .session-notice h3 { margin:0 0 8px; color:var(--yellow); font-size:21px; }
+  .session-notice p { margin:0 0 16px; color:var(--chalk); line-height:1.5; font-size:13.5px; }
+  .help-overlay { position:fixed; inset:0; z-index:5000; background:rgba(0,0,0,.68); display:flex; align-items:center; justify-content:center; padding:16px; }
+  .help-modal { width:min(460px,100%); background:var(--board); border:1px solid var(--rail-light); border-radius:18px; padding:18px; box-shadow:0 20px 60px rgba(0,0,0,.45); }
+  .help-modal-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
+  .help-modal-head h3 { margin:0; color:var(--yellow); font-size:22px; }
+  .help-close { border:0; background:transparent; color:var(--muted); font-size:25px; cursor:pointer; line-height:1; }
+  .help-label { display:block; margin:0 0 6px; color:var(--chalk); font-size:13px; font-weight:700; }
+  .help-input, .help-textarea { width:100%; box-sizing:border-box; border:1px solid var(--rail-light); background:var(--board-deep); color:var(--chalk); border-radius:11px; padding:11px 12px; outline:none; font:inherit; }
+  .help-textarea { min-height:130px; resize:vertical; }
+  .help-input:focus, .help-textarea:focus { border-color:var(--yellow); }
+  .help-field { margin-bottom:13px; }
+  .help-status { margin:10px 0 0; font-size:13px; }
+  .help-note { color:var(--muted); font-size:12px; margin:0 0 14px; line-height:1.45; }
   .account-btn svg { width:16px; height:16px; }
+  .account-btn { min-height:36px; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .dash-header .btn-ghost, .dash-header .btn-add, .dash-header .contact-btn, .dash-header .account-btn { width:100%; min-width:0; box-sizing:border-box; }
   .account-btn { background:var(--board-deep); border:1px solid var(--rail-light); color:var(--chalk); border-radius:10px; padding:9px 12px; display:inline-flex; align-items:center; gap:8px; cursor:pointer; font-weight:600; }
   .account-menu { position:absolute; right:0; top:calc(100% + 8px); z-index:1000; width:min(300px, calc(100vw - 32px)); background:var(--board-deep); border:1px solid var(--rail-light); border-radius:14px; padding:8px; box-shadow:0 18px 45px rgba(0,0,0,.35); }
   .account-item { width:100%; text-align:left; background:transparent; border:0; color:var(--chalk); padding:11px 12px; border-radius:9px; cursor:pointer; display:flex; align-items:center; gap:10px; }
@@ -209,6 +239,15 @@
   <header class="app-head">
     <h1>Your Term, Mapped</h1>
     <p class="sub">Classes, assignments, exams and attendance — kept in one place, saved right here in your browser.</p>
+    <div class="theme-switch" aria-label="Theme selection">
+      <button id="redThemeBtn" class="theme-btn" style="--bulb:#ff3b30" onclick="setTheme('red')" aria-label="Theme 1"></button>
+      <button id="orangeThemeBtn" class="theme-btn" style="--bulb:#ff9500" onclick="setTheme('orange')" aria-label="Theme 2"></button>
+      <button id="yellowThemeBtn" class="theme-btn" style="--bulb:#ffd60a" onclick="setTheme('yellow')" aria-label="Theme 3"></button>
+      <button id="greenThemeBtn" class="theme-btn" style="--bulb:#34c759" onclick="setTheme('green')" aria-label="Theme 4"></button>
+      <button id="blueThemeBtn" class="theme-btn" style="--bulb:#0a84ff" onclick="setTheme('blue')" aria-label="Theme 5"></button>
+      <button id="indigoThemeBtn" class="theme-btn" style="--bulb:#5856d6" onclick="setTheme('indigo')" aria-label="Theme 6"></button>
+      <button id="violetThemeBtn" class="theme-btn" style="--bulb:#af52de" onclick="setTheme('violet')" aria-label="Theme 7"></button>
+    </div>
   </header>
   <nav id="tabs"></nav>
   <div id="content"></div>
@@ -239,6 +278,10 @@ let keySavedMsg = "";
 const REMINDER_DAYS = 2; // flag assignments/exams due within this many days
 const NOTIFIED_KEY = "student-tracker-notified-v1";
 const BACKEND_URL = "https://srm-tracker-backend.vercel.app/api/portal-login";
+const EMAILJS_PUBLIC_KEY = "TbdijOpdDCsFuHgzK";
+const EMAILJS_SERVICE_ID = "service_hcl9ew6";
+const EMAILJS_TEMPLATE_ID = "template_9zuj7fr";
+try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); } catch (e) {}
 
 let portalUsername = "";
 let portalPassword = "";
@@ -249,6 +292,15 @@ let portalStatus = ""; // "", "loading", "ready", "loggingin", "success", "error
 let portalMessage = "";
 let loggedIn = false;
 let accountMenuOpen = false;
+let helpOpen = false;
+let helpSubject = "";
+let helpEmail = "";
+let helpMessage = "";
+let helpSending = false;
+let helpStatus = "";
+let helpStatusOk = false;
+let contactOpen = false;
+let sessionNoticeOpen = false;
 const ACCOUNTS_KEY = "student-tracker-accounts-v1";
 const ACTIVE_ACCOUNT_KEY = "student-tracker-active-account-v1";
 let activeAccountKey = localStorage.getItem(ACTIVE_ACCOUNT_KEY) || "";
@@ -877,13 +929,50 @@ async function submitPortalLogin() {
 }
 
 async function refreshPortalData() {
+  if (refreshing) return;
   refreshing = true;
-  portalMessage = "";
+  portalMessage = "Checking your SRM session and loading portal information…";
   render();
-  await refreshAllPortalPages();
-  portalMessage = Object.keys(portalPages).length
-    ? "Refreshed your connected sections."
-    : "Logged in. Tap 'Discover & load everything' under My Portal.";
+  try {
+    await refreshAllPortalPages();
+    const pageCount = Object.keys(portalPages).length;
+    const hasUsefulPortalData = pageCount > 0 && Object.values(portalPages).some(p => {
+      if (!p) return false;
+      const text = String(p.text || p.html || "").trim();
+      const tables = Array.isArray(p.tables) ? p.tables.filter(t => Array.isArray(t) && t.length > 0) : [];
+      return text.length > 40 || tables.length > 0;
+    });
+
+    // A session cookie alone is NOT proof that the SRM session is valid.
+    // If the backend says the session exists but the portal returns no actual
+    // information, treat it as an expired/stale session and force login.
+    if (!hasUsefulPortalData) {
+      loggedIn = false;
+      portalPassword = "";
+      portalCaptcha = "";
+      portalCaptchaImage = "";
+      portalSessionCookie = "";
+      portalStatus = "";
+      portalPages = {};
+      if (activeAccountKey && accounts[activeAccountKey]) {
+        accounts[activeAccountKey].sessionCookie = "";
+        saveAccounts();
+      }
+      sessionNoticeOpen = true;
+      refreshing = false;
+      render();
+      await startPortalLogin();
+      return;
+    }
+
+    portalMessage = "Refreshed your connected sections.";
+  } catch (e) {
+    portalMessage = "Couldn’t load your SRM information. Please log in again.";
+    loggedIn = false;
+    portalSessionCookie = "";
+    portalPages = {};
+    sessionNoticeOpen = true;
+  }
   refreshing = false;
   render();
 }
@@ -901,6 +990,62 @@ function logoutPortal() {
   accountMenuOpen = false;
   render();
   startPortalLogin();
+}
+
+// Forces a brand-new portal session and returns to the SRM login screen.
+// Useful when the old session exists but its portal pages are no longer loading.
+async function loginRefresh() {
+  if (refreshing) return;
+  saveCurrentAccount();
+  loggedIn = false;
+  portalPassword = "";
+  portalCaptcha = "";
+  portalCaptchaImage = "";
+  portalSessionCookie = "";
+  portalStatus = "";
+  portalMessage = "";
+  portalPages = {};
+  accountMenuOpen = false;
+  sessionNoticeOpen = true;
+  render();
+  await startPortalLogin();
+}
+
+function openContact(){
+  contactOpen = true;
+  render();
+}
+function closeContact(){
+  contactOpen = false;
+  render();
+}
+function closeSessionNotice(){
+  sessionNoticeOpen = false;
+  render();
+}
+function renderContactModal(){
+  if(!contactOpen) return "";
+  return `<div class="help-overlay" onclick="if(event.target===this)closeContact()">
+    <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
+      <div class="help-modal-head">
+        <h3 id="contactTitle">Contact Us</h3>
+        <button class="help-close" type="button" onclick="closeContact()" aria-label="Close">×</button>
+      </div>
+      <p class="help-note">For help, feedback, or suggestions, contact me at:</p>
+      <a href="mailto:srmapx9@gmail.com" style="display:block;text-align:center;color:var(--yellow);font-weight:800;text-decoration:none;font-size:15px;padding:12px;border:1px solid var(--rail-light);border-radius:11px;background:var(--board-deep);">srmapx9@gmail.com</a>
+    </div>
+  </div>`;
+}
+function renderSessionNotice(){
+  if(!sessionNoticeOpen) return "";
+  return `<div class="session-notice-overlay">
+    <div class="session-notice" role="dialog" aria-modal="true" aria-labelledby="sessionNoticeTitle">
+      <div class="session-notice-icon">↻</div>
+      <h3 id="sessionNoticeTitle">Session expired</h3>
+      <p>Your previous SRM session is no longer being used. Please log in again to load the latest portal information.</p>
+      <button class="btn-save" type="button" onclick="closeSessionNotice()" style="width:100%;justify-content:center;">Continue to Login</button>
+    </div>
+  </div>`;
 }
 
 
@@ -1842,20 +1987,115 @@ function renderStudentDashboard(){
   </div>`;
 }
 
+
+function openHelp(){
+  helpOpen = true;
+  helpStatus = "";
+  helpStatusOk = false;
+  render();
+  setTimeout(() => document.getElementById("helpSubject")?.focus(), 0);
+}
+function closeHelp(){
+  if (helpSending) return;
+  helpOpen = false;
+  helpStatus = "";
+  render();
+}
+async function sendHelpMessage(){
+  const subject = helpSubject.trim();
+  const email = helpEmail.trim();
+  const message = helpMessage.trim();
+  if (!subject || !email || !message) {
+    helpStatusOk = false;
+    helpStatus = "Please enter your email, a subject, and a message.";
+    render();
+    return;
+  }
+  if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    helpStatusOk = false;
+    helpStatus = "Please enter a valid email address.";
+    render();
+    return;
+  }
+  if (subject.length > 160 || message.length > 5000) {
+    helpStatusOk = false;
+    helpStatus = "Subject must be under 160 characters and message under 5000 characters.";
+    render();
+    return;
+  }
+
+  helpSending = true;
+  helpStatus = "Sending…";
+  helpStatusOk = false;
+  render();
+
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      subject,
+      message,
+      username: portalUsername || activeAccountKey || "Not available",
+      email
+    });
+    helpStatusOk = true;
+    helpStatus = "Message sent successfully.";
+    helpSubject = "";
+    helpEmail = "";
+    helpMessage = "";
+  } catch (e) {
+    console.error("EmailJS help message failed:", e);
+    helpStatusOk = false;
+    helpStatus = "Couldn't send the message. Please try again.";
+  } finally {
+    helpSending = false;
+    render();
+  }
+}
+
+function renderHelpModal(){
+  if (!helpOpen) return "";
+  return `<div class="help-overlay" onclick="if(event.target===this)closeHelp()">
+    <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="help-modal-head">
+        <h3 id="helpTitle">Need Help?</h3>
+        <button class="help-close" type="button" onclick="closeHelp()" aria-label="Close">×</button>
+      </div>
+      <p class="help-note">Send a message to the SRM Tracker support team. Your password is never included.</p>
+      <div class="help-field">
+        <label class="help-label" for="helpEmail">Your Email ID</label>
+        <input id="helpEmail" class="help-input" type="email" maxlength="254" value="${esc(helpEmail)}" oninput="helpEmail=this.value" placeholder="yourname@example.com" autocomplete="email" />
+      </div>
+      <div class="help-field">
+        <label class="help-label" for="helpSubject">Subject</label>
+        <input id="helpSubject" class="help-input" maxlength="160" value="${esc(helpSubject)}" oninput="helpSubject=this.value" placeholder="What do you need help with?" />
+      </div>
+      <div class="help-field">
+        <label class="help-label" for="helpMessage">Message</label>
+        <textarea id="helpMessage" class="help-textarea" maxlength="5000" oninput="helpMessage=this.value" placeholder="Describe the problem or suggestion…">${esc(helpMessage)}</textarea>
+      </div>
+      <button class="btn-save" type="button" onclick="sendHelpMessage()" ${helpSending?"disabled":""} style="width:100%;justify-content:center;">
+        ${helpSending?"Sending…":"Send Message"}
+      </button>
+      ${helpStatus ? `<p class="help-status" style="color:${helpStatusOk?'var(--green)':'var(--coral)'};">${esc(helpStatus)}</p>` : ""}
+    </div>
+  </div>`;
+}
+
 function render(){
   if (!loggedIn) {
     document.getElementById("tabs").innerHTML = "";
-    document.getElementById("content").innerHTML = renderPortal();
+    document.getElementById("content").innerHTML = renderPortal() + renderSessionNotice();
     return;
   }
   document.getElementById("tabs").innerHTML = ""; // single view now -- no tab bar needed
   let html = `<div class="dash-header">
-    <button class="btn-add" onclick="refreshPortalData()" ${refreshing?"disabled":""}>${ICONS.sparkles} ${refreshing?"Refreshing…":"Refresh"}</button>
-    <div class="account-wrap">
-      <button class="account-btn" onclick="${accountMenuOpen?'closeAccountMenu()':'openAccountMenu()'}">${ICONS.user || '◉'} <span>${esc(accountLabel(activeAccountKey || accountKey(portalUsername) || 'Account'))}</span> ▾</button>
-      ${accountMenuOpen ? renderAccountMenu() : ''}
-    </div>
-  </div>`;
+      <button class="btn-ghost" onclick="loginRefresh()" ${refreshing?"disabled":""} title="Clear the current SRM session and return to login" style="border:1px solid var(--rail);border-radius:8px;">↻ Login Refresh</button>
+      <button class="btn-add" onclick="refreshPortalData()" ${refreshing?"disabled":""}>${ICONS.sparkles} ${refreshing?"Refreshing…":"Refresh"}</button>
+      <button class="contact-btn" type="button" onclick="openContact()" title="Contact Us">Contact Us</button>
+      <div class="account-wrap">
+        <button class="account-btn" onclick="${accountMenuOpen?'closeAccountMenu()':'openAccountMenu()'}">${ICONS.user || '◉'} <span>${esc(accountLabel(activeAccountKey || accountKey(portalUsername) || 'Account'))}</span> ▾</button>
+        ${accountMenuOpen ? renderAccountMenu() : ''}
+      </div>
+    </div>`;
   if (portalMessage) {
     html += `<div class="warn">${ICONS.warn}<span>${esc(portalMessage)}</span></div>`;
   }
@@ -1865,8 +2105,42 @@ function render(){
   html += renderQuickJump();
   html += renderMarksAnalytics();
   html += renderMyPortal();
+  html += renderContactModal();
+  html += renderSessionNotice();
   document.getElementById("content").innerHTML = html;
   renderBunkFloat();
+}
+
+function setTheme(theme){
+  const themes={
+    red:{name:'Realistic Car',board:'#15191f',dark:'#0e1116',deep:'#090c10',chalk:'#f4f7fb',dim:'#aeb7c4',yellow:'#ff3b30',coral:'#ff6b61',rail:'#252b34',railLight:'#3b4654',green:'#69e6a3'},
+    orange:{name:'Sunset Drive',board:'#2a160d',dark:'#1d0f08',deep:'#140a05',chalk:'#fff5eb',dim:'#d0a98c',yellow:'#ff9500',coral:'#ff6b35',rail:'#472611',railLight:'#693916',green:'#79df9a'},
+    yellow:{name:'Barbie',board:'#3b102b',dark:'#28091e',deep:'#1d0615',chalk:'#fff0fb',dim:'#dca7ca',yellow:'#ff69b4',coral:'#ff4fa3',rail:'#5b1645',railLight:'#7b2260',green:'#8ff0c1'},
+    green:{name:'Free Fire',board:'#101d14',dark:'#0a140e',deep:'#060d09',chalk:'#effff2',dim:'#a4c5ac',yellow:'#a7ff2e',coral:'#ff4d4d',rail:'#203b28',railLight:'#315b3c',green:'#62ff9b'},
+    blue:{name:'PUBG',board:'#18200f',dark:'#10160a',deep:'#0a0f06',chalk:'#f5f3df',dim:'#bcb997',yellow:'#d7c26e',coral:'#e46a45',rail:'#343b1d',railLight:'#505b2b',green:'#8bd36b'},
+    indigo:{name:'Cyber',board:'#11142b',dark:'#0a0c1d',deep:'#060713',chalk:'#eef0ff',dim:'#9fa8d8',yellow:'#6dffea',coral:'#ff4fd8',rail:'#202650',railLight:'#303b76',green:'#63ff9e'},
+    violet:{name:'Galaxy',board:'#160d28',dark:'#0d071b',deep:'#080411',chalk:'#f7efff',dim:'#c1acd8',yellow:'#b86cff',coral:'#ff6acb',rail:'#2c1748',railLight:'#48256f',green:'#70e5d0'}
+  };
+  const t=themes[theme]||themes.blue;
+  const root=document.documentElement;
+  root.style.setProperty('--board',t.board);
+  root.style.setProperty('--board-dark',t.dark);
+  root.style.setProperty('--board-deep',t.deep);
+  root.style.setProperty('--chalk',t.chalk);
+  root.style.setProperty('--chalk-dim',t.dim);
+  root.style.setProperty('--yellow',t.yellow);
+  root.style.setProperty('--coral',t.coral);
+  root.style.setProperty('--rail',t.rail);
+  root.style.setProperty('--rail-light',t.railLight);
+  root.style.setProperty('--green',t.green);
+  try{localStorage.setItem('student-tracker-theme-v1',theme);}catch(e){}
+  document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(theme+'ThemeBtn')?.classList.add('active');
+}
+function initTheme(){
+  let theme='blue';
+  try{theme=localStorage.getItem('student-tracker-theme-v1')||'blue';}catch(e){}
+  setTheme(theme);
 }
 
 load();
@@ -1878,6 +2152,7 @@ if(activeAccountKey && accounts[activeAccountKey]){
   portalStatus=loggedIn?"success":"";
 }
 render();
+initTheme();
 if (loggedIn) refreshPortalData();
 else if (!portalStatus) startPortalLogin();
 setInterval(()=>{ if(loggedIn){ document.querySelectorAll('.india-clock').forEach(el=>{ const holder=el.parentElement; if(holder) { const tmp=document.createElement('span'); tmp.innerHTML=indiaClockHTML(); el.replaceWith(tmp.firstElementChild); } }); } },1000);
