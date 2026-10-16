@@ -188,7 +188,7 @@
   .wheel-segment button:hover,.wheel-segment button.active{border-color:#62ff9b;color:#a4ffc2;background:linear-gradient(180deg,#273e31,#0b1510);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 0 1px rgba(98,255,155,.18),0 0 20px rgba(98,255,155,.28),0 7px 16px rgba(0,0,0,.5);}
   .wheel-segment.bunk-segment button{border-color:rgba(98,255,155,.35);background:linear-gradient(180deg,#345e47,#101b15);color:#b8ffd0;}
   .wheel-segment button{font-weight:1000;font-size:9px;letter-spacing:.075em;color:#fffdf0;text-shadow:0 2px 4px rgba(0,0,0,.9),0 0 8px rgba(255,219,118,.18);}
-  .wheel-segment button.label-muted{opacity:.34;filter:saturate(.72)}
+  .wheel-segment button.label-muted{opacity:1;filter:none}
   .wheel-segment button.label-muted:hover,.wheel-segment button.label-muted.active{opacity:1;filter:none}
   .wheel-segment button.active{font-weight:1000;opacity:1;transform:rotate(var(--label-counter,0deg)) scale(1.04);text-shadow:0 0 10px rgba(255,225,126,.8),0 2px 4px rgba(0,0,0,.9)}
   .wheel-name-ghosts{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;border-radius:50%;}
@@ -234,9 +234,9 @@
   .portal-action-token.right{animation:tokenToRight .62s cubic-bezier(.18,.82,.22,1) both;}
   @keyframes tokenToLeft{0%{opacity:0;transform:translate(-50%,-50%) scale(.65)}18%{opacity:1}100%{opacity:1;transform:translate(-235%,-82%) scale(.82) rotate(-5deg)}}
   @keyframes tokenToRight{0%{opacity:0;transform:translate(-50%,-50%) scale(.65)}18%{opacity:1}100%{opacity:1;transform:translate(135%,-82%) scale(.82) rotate(5deg)}}
-  .portal-section-overlay{position:relative;z-index:40;width:min(100%,365px);margin:12px auto 0;padding:0 4px;display:block;animation:portalPanelIn .42s cubic-bezier(.18,.8,.22,1) both;}
+  .portal-section-overlay{position:relative;z-index:40;width:100%;max-width:100%;margin:18px auto 0;padding:0 2px 24px;display:block;animation:portalPanelIn .42s cubic-bezier(.18,.8,.22,1) both;scroll-margin-top:12px;}
   @keyframes portalPanelIn{from{opacity:0;transform:translateY(28px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
-  .rugged-section-card{position:relative;width:100%;max-height:300px;overflow:auto;margin:0;padding:14px;border-radius:18px;border:1px solid rgba(98,255,155,.24);background:linear-gradient(145deg,rgba(32,43,38,.98),rgba(8,12,11,.98));box-shadow:0 24px 55px rgba(0,0,0,.68),inset 0 1px 0 rgba(255,255,255,.07);}
+  .rugged-section-card{position:relative;width:100%;max-height:none;overflow:visible;margin:0;padding:14px;border-radius:18px;border:1px solid rgba(98,255,155,.24);background:linear-gradient(145deg,rgba(32,43,38,.98),rgba(8,12,11,.98));box-shadow:0 24px 55px rgba(0,0,0,.68),inset 0 1px 0 rgba(255,255,255,.07);}
   .rugged-section-card:before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#62ff9b,transparent);}
   .rugged-section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;position:relative;z-index:1;}
   .rugged-section-title{font:800 14px 'IBM Plex Mono',monospace;color:var(--chalk);text-transform:uppercase;max-width:58%;}
@@ -244,7 +244,7 @@
   .rugged-refresh{border:1px solid rgba(255,255,255,.12);background:#171b1d;color:var(--chalk);border-radius:7px;padding:5px 7px;cursor:pointer;font-size:11px;}
   .rugged-close{border:1px solid rgba(98,255,155,.22);background:#111715;color:#a4ffc2;border-radius:7px;padding:5px 8px;cursor:pointer;font-weight:800;}
   .portal-section-overlay .rugged-section-card table{background:rgba(0,0,0,.18);border-radius:10px;overflow:hidden;}
-  @media(max-width:430px){.portal-wheel-stage{width:min(390px,98vw);height:338px}.portal-wheel{width:282px;height:282px;margin:-141px 0 0 -141px}.wheel-hub{width:86px;height:86px}.wheel-segment button{font-size:7px}.wheel-person{width:104px;height:276px;bottom:4px}.wheel-person.left{left:-4px}.wheel-person.right{right:-4px}.wheel-person-note{width:118px;font-size:7px}.wheel-person.left .wheel-person-note{left:60px}.wheel-person.right .wheel-person-note{right:60px}.portal-action-token{font-size:6.5px}.portal-section-overlay{width:100%;padding:0 2px}.rugged-section-card{max-height:290px;padding:11px}.rugged-section-title{font-size:12px;max-width:52%;}}
+  @media(max-width:430px){.portal-wheel-stage{width:min(390px,98vw);height:338px}.portal-wheel{width:282px;height:282px;margin:-141px 0 0 -141px}.wheel-hub{width:86px;height:86px}.wheel-segment button{font-size:7px}.wheel-person{width:104px;height:276px;bottom:4px}.wheel-person.left{left:-4px}.wheel-person.right{right:-4px}.wheel-person-note{width:118px;font-size:7px}.wheel-person.left .wheel-person-note{left:60px}.wheel-person.right .wheel-person-note{right:60px}.portal-action-token{font-size:6.5px}.portal-section-overlay{width:100%;padding:0 2px 24px}.rugged-section-card{max-height:none;overflow:visible;padding:11px}.rugged-section-title{font-size:12px;max-width:52%;}}
 
   details.portal-group summary { list-style:none; cursor:pointer; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; color:var(--chalk); font-weight:600; font-size:14.5px; }
   details.portal-group summary::-webkit-details-marker { display:none; }
@@ -2120,6 +2120,26 @@ function renderPortalMascot(side,key){
     <div class="wheel-guide-role">GESTURE GUIDE · ${esc(raw)}</div>
   </div>`;
 }
+let portalLastScrollY = window.scrollY || 0;
+let portalScrollDismissQueued = false;
+window.addEventListener('scroll',()=>{
+  const currentY=window.scrollY||0;
+  const scrollingUp=currentY<portalLastScrollY;
+  portalLastScrollY=currentY;
+  if(!scrollingUp || !portalOverlayKey || portalScrollDismissQueued)return;
+  const stage=document.querySelector('.portal-wheel-stage');
+  if(!stage)return;
+  const rect=stage.getBoundingClientRect();
+  // When the user scrolls back up until the wheel comes back into view, close the opened section.
+  if(rect.bottom>70 && rect.top<window.innerHeight*0.72){
+    portalScrollDismissQueued=true;
+    requestAnimationFrame(()=>{
+      portalScrollDismissQueued=false;
+      if(portalOverlayKey && (window.scrollY||0)<portalLastScrollY+1) closePortalSection();
+    });
+  }
+},{passive:true});
+
 function renderSelectedPortalSection(key){
   const page=portalPages[key]; if(!page)return '';
   const isRefreshing=!!refreshingKeys[key];
@@ -2191,7 +2211,8 @@ function renderMyPortal(){
   const n=wheelKeys.length;
   wheelKeys.forEach((key,i)=>{
     const isBunk=key==='__bunk_management__',page=isBunk?null:portalPages[key],angle=(360/n)*i-90,active=portalOverlayKey===key||portalDropKey===key;
-    const muted=(!active && i%3===1)?' label-muted':'';
+    // Keep all wheel options equally visible; opacity is not an availability indicator.
+    const muted='';
     html+=`<div class="wheel-segment ${isBunk?'bunk-segment':''}" style="--angle:${angle}deg"><button class="${active?'active':''}${muted}" aria-label="${esc(isBunk?'Bunk Management':portalWheelName(page,key))}" style="--label-counter:calc(0deg - var(--wheel-rot, 0deg))" onclick='selectPortalSection(${JSON.stringify(key)})'>${wheelSmallCaps(isBunk?'BUNK MANAGEMENT':portalWheelName(page,key))}</button></div>`;
   });
   html+=`</div>${renderWheelGhostNames(wheelKeys)}
@@ -2238,11 +2259,12 @@ const KNOWN_SECTIONS = [
   { label: "Attendance", url: REPORT_URL, postBody: "ids=3", group: "Academic" },
   { label: "Timetable", url: REPORT_URL, postBody: "ids=10", group: "Academic" },
   { label: "Subjects", url: REPORT_URL, postBody: "ids=2", group: "Academic" },
-  { label: "CGPA / Results", url: REPORT_URL, postBody: "ids=6", group: "Examination" },
+  { label: "Current Semester Results", url: REPORT_URL, postBody: "ids=1", group: "Examination" },
+  { label: "Room Details", url: REPORT_URL, postBody: "ids=21", group: "Hostel" },
   { label: "Internal Marks", url: REPORT_URL, postBody: "ids=5", group: "Examination" },
   { label: "Today's Attendance", url: "https://student.srmap.edu.in/srmapstudentcorner/students/transaction/studentattendance.jsp", postBody: "ids=33", group: "Academic" },
   { label: "Fee Due", url: "https://student.srmap.edu.in/srmapstudentcorner/students/transaction/feeduegroups.jsp", group: "Finance" },
-  { label: "Fee Paid Details", url: "https://student.srmap.edu.in/srmapstudentcorner/students/transaction/feepaiddetails.jsp", group: "Finance" },
+  { label: "Fee Paid Details", url: REPORT_URL, postBody: "ids=7", group: "Finance" },
   { label: "Hostel Registration", url: "https://student.srmap.edu.in/srmapstudentcorner/students/registrations/hostelregistrationinstruction.jsp", group: "Hostel" },
 ];
 
