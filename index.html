@@ -817,6 +817,22 @@ body:before,body:after{display:none!important;}
 }
 </style>
 
+
+<style id="login-layout-toggle-and-password-eye">
+.login-layout-tools{position:relative;z-index:5;max-width:470px;margin:0 auto 14px;padding:10px 12px;border:1px solid rgba(143,217,168,.28);border-radius:16px;background:rgba(12,28,20,.76);box-shadow:0 8px 24px rgba(0,0,0,.18);text-align:center}
+.layout-tools-label{display:block;color:#9fb3a8;font:800 9px 'IBM Plex Mono',monospace;letter-spacing:.16em;margin-bottom:8px}
+.layout-toggle{display:flex;justify-content:center;gap:8px}
+.layout-choice{flex:1;min-height:38px;border:1px solid rgba(143,217,168,.35);border-radius:11px;background:rgba(31,59,46,.8);color:#f3f0e4;font:700 12px Inter,sans-serif;padding:8px 10px;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.layout-choice:hover{border-color:#8fd9a8;transform:translateY(-1px)}
+.layout-choice.active{background:linear-gradient(135deg,#8fd9a8,#62c98c);border-color:#b7f2c8;color:#13251a;box-shadow:0 0 0 2px rgba(143,217,168,.1)}
+.login-layout-tools p{margin:8px 0 0;color:#9fb3a8;font-size:10px;line-height:1.45}.login-layout-tools p b{color:#f3f0e4}
+.password-control{position:relative;display:block;width:100%;grid-column:1/-1}.password-control .login-entry-input{width:100%;box-sizing:border-box;padding-right:48px!important}.password-eye{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:1px solid rgba(143,217,168,.24);border-radius:9px;background:rgba(31,59,46,.88);color:#f3f0e4;cursor:pointer;font-size:16px;display:grid;place-items:center}.password-eye:hover{background:rgba(143,217,168,.18);border-color:#8fd9a8}
+/* Manual orientation preference overrides the automatic breakpoint. */
+@media (min-width:900px){html.layout-force-vertical .wrap{width:min(470px,calc(100% - 28px));max-width:470px;margin-inline:auto;padding:18px 0 40px}html.layout-force-vertical .command-card{display:block;min-height:0;padding:22px;margin:16px 0;border-radius:22px}html.layout-force-vertical .command-grid{grid-template-columns:1fr 1fr;margin-top:16px}html.layout-force-vertical .portal-wheel-stage{width:min(620px,100%)}html.layout-force-vertical #content{width:100%}html.layout-force-vertical .portal-drop-zone{width:100%;max-width:100%}}
+@media (max-width:899px){html.layout-force-landscape .wrap{width:calc(100% - 20px);max-width:none}html.layout-force-landscape .command-card{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:12px;padding:16px}html.layout-force-landscape .command-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}html.layout-force-landscape .portal-wheel-stage{width:min(460px,100%)}html.layout-force-landscape .portal-drop-zone{max-width:100%}}
+@media (max-width:520px){.login-layout-tools{margin-bottom:10px;padding:9px}.layout-choice{font-size:11px;padding:8px 6px}.login-layout-tools p{font-size:9px}}
+</style>
+
 </head>
 <body>
   <div class="galaxy-space" aria-hidden="true">
@@ -891,6 +907,8 @@ try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); } catch (e) {}
 
 let portalUsername = "";
 let portalPassword = "";
+let portalPasswordVisible = false;
+let preferredPageLayout = "auto";
 let rememberDevice = true;
 let portalCaptcha = "";
 let portalCaptchaImage = "";
@@ -1416,14 +1434,35 @@ function renderAccountMenu(){
   return html;
 }
 
+function setPreferredPageLayout(layout) {
+  preferredPageLayout = layout;
+  document.documentElement.classList.toggle("layout-force-vertical", layout === "vertical");
+  document.documentElement.classList.toggle("layout-force-landscape", layout === "landscape");
+  try { localStorage.setItem("termMappedLayout", layout); } catch (e) {}
+  render();
+}
+function togglePortalPassword() {
+  portalPasswordVisible = !portalPasswordVisible;
+  render();
+  const input = document.getElementById("portal-password-input");
+  if (input) { input.focus(); try { input.setSelectionRange(input.value.length, input.value.length); } catch (e) {} }
+}
+try {
+  const savedLayout = localStorage.getItem("termMappedLayout");
+  if (savedLayout === "vertical" || savedLayout === "landscape") preferredPageLayout = savedLayout;
+} catch (e) {}
+document.documentElement.classList.toggle("layout-force-vertical", preferredPageLayout === "vertical");
+document.documentElement.classList.toggle("layout-force-landscape", preferredPageLayout === "landscape");
+
 function renderPortal() {
   let html = `<div class="unique-login-page"><div class="login-orbit login-orbit-a"></div><div class="login-orbit login-orbit-b"></div>
+    <div class="login-layout-tools"><span class="layout-tools-label">CHOOSE YOUR VIEW</span><div class="layout-toggle"><button type="button" class="layout-choice ${preferredPageLayout === "vertical" ? "active" : ""}" onclick="setPreferredPageLayout('vertical')" aria-pressed="${preferredPageLayout === "vertical"}">📱 Vertical</button><button type="button" class="layout-choice ${preferredPageLayout === "landscape" ? "active" : ""}" onclick="setPreferredPageLayout('landscape')" aria-pressed="${preferredPageLayout === "landscape"}">🖥️ Landscape</button></div><p>For the best experience, choose <b>Landscape</b> on a laptop and <b>Vertical</b> on a phone.</p></div>
     <div class="login-brand-mark"><div class="login-icon-frame"><img src="${LOGIN_ICON_IMAGE}" alt="Tracker icon"></div><div class="login-brand-copy"><span>YOUR TERM, MAPPED</span><b>SRM // PORTAL</b></div></div>
     <div class="login-hero-card"><div class="login-marquee"><span>WELCOME BACK</span><i></i><em>LIVE PORTAL</em></div>
       <div class="login-icon-stage"><div class="login-icon-glow"></div><img src="${LOGIN_ICON_IMAGE}" alt="Your Term, Mapped" class="login-hero-icon"><div class="login-icon-reflection"></div></div>
       <div class="login-copy"><div class="login-kicker">ONE LOGIN · YOUR WHOLE TERM</div><h2>Enter the Portal</h2><p>Connect your real SRM account and let the tracker build your live academic dashboard.</p></div>
       <div class="login-rail"><span></span><b>SECURE SESSION</b><span></span></div>
-      <div class="form login-form"><label class="login-entry"><span class="entry-icon">ID</span><span class="entry-copy"><b>REGISTRATION NUMBER</b><small>SRM student identity</small></span><input class="login-entry-input" type="text" value="${esc(portalUsername)}" oninput="portalUsername=this.value" placeholder="AP25XXXXXXXX" autocomplete="username" autocapitalize="off" /></label><label class="login-entry"><span class="entry-icon">KEY</span><span class="entry-copy"><b>PORTAL PASSWORD</b><small>Your SRM account password</small></span><input class="login-entry-input" type="password" value="${esc(portalPassword)}" oninput="portalPassword=this.value" placeholder="Enter password" autocomplete="current-password" /></label><label class="remember-device"><input type="checkbox" ${rememberDevice?"checked":""} onchange="rememberDevice=this.checked"><span><b>Remember this device</b><small>Keep your signed-in SRM session on this device.</small></span><em>✓</em></label>`;
+      <div class="form login-form"><label class="login-entry"><span class="entry-icon">ID</span><span class="entry-copy"><b>REGISTRATION NUMBER</b><small>SRM student identity</small></span><input class="login-entry-input" type="text" value="${esc(portalUsername)}" oninput="portalUsername=this.value" placeholder="AP25XXXXXXXX" autocomplete="username" autocapitalize="off" /></label><label class="login-entry"><span class="entry-icon">KEY</span><span class="entry-copy"><b>PORTAL PASSWORD</b><small>Your SRM account password</small></span><span class="password-control"><input class="login-entry-input" id="portal-password-input" type="${portalPasswordVisible ? "text" : "password"}" value="${esc(portalPassword)}" oninput="portalPassword=this.value" placeholder="Enter password" autocomplete="current-password" /><button class="password-eye" type="button" onclick="togglePortalPassword()" aria-label="${portalPasswordVisible ? "Hide password" : "Show password"}" title="${portalPasswordVisible ? "Hide password" : "Show password"}">${portalPasswordVisible ? "🙈" : "👁️"}</button></span></label><label class="remember-device"><input type="checkbox" ${rememberDevice?"checked":""} onchange="rememberDevice=this.checked"><span><b>Remember this device</b><small>Keep your signed-in SRM session on this device.</small></span><em>✓</em></label>`;
   if (portalStatus === "loading") html += `<div class="login-loading"><span></span><span></span><span></span> Preparing secure sign-in…</div>`;
   else if (portalCaptchaImage) html += `<div class="login-captcha"><img src="${portalCaptchaImage}" alt="captcha"><label class="field">Verification<input type="text" value="${esc(portalCaptcha)}" oninput="portalCaptcha=this.value" autocomplete="off" autocapitalize="off" placeholder="Captcha text" /></label></div>`;
   else html += `<div class="login-loading"><span></span><span></span><span></span> Preparing portal session…</div>`;
