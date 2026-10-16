@@ -185,7 +185,9 @@
   .wheel-segment{position:absolute;left:50%;top:50%;width:42%;height:38px;margin:-19px 0 0 -21%;transform:rotate(var(--angle)) translateX(48%) rotate(calc(var(--angle) * -1));transform-origin:0 50%;z-index:3;display:flex;align-items:center;justify-content:center;}
   .wheel-segment:before{content:'';position:absolute;left:-19px;width:12px;height:12px;border-radius:50%;background:#0b0e10;border:2px solid #3e4749;box-shadow:inset 0 1px 2px rgba(255,255,255,.18),0 0 0 1px rgba(0,0,0,.85),0 0 11px rgba(98,255,155,.16);}
   .wheel-segment button{position:relative;width:100%;height:38px;padding:0 8px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:linear-gradient(180deg,#343b3d,#0d1112);color:var(--chalk);font:900 8px 'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.045em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.10),inset 0 -3px 7px rgba(0,0,0,.62),0 7px 15px rgba(0,0,0,.48);transition:border-color .12s,color .12s,background .12s;transform:rotate(var(--label-counter,0deg));}
-  .wheel-segment button:hover,.wheel-segment button.active{border-color:#62ff9b;color:#a4ffc2;background:linear-gradient(180deg,#273e31,#0b1510);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 0 1px rgba(98,255,155,.18),0 0 20px rgba(98,255,155,.28),0 7px 16px rgba(0,0,0,.5);}
+  .wheel-segment{z-index:12;pointer-events:auto}
+.wheel-segment button{position:relative;z-index:13;pointer-events:auto;cursor:pointer}
+.wheel-segment button:hover,.wheel-segment button.active{border-color:#62ff9b;color:#a4ffc2;background:linear-gradient(180deg,#273e31,#0b1510);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 0 1px rgba(98,255,155,.18),0 0 20px rgba(98,255,155,.28),0 7px 16px rgba(0,0,0,.5);}
   .wheel-segment.bunk-segment button{border-color:rgba(98,255,155,.35);background:linear-gradient(180deg,#345e47,#101b15);color:#b8ffd0;}
   .wheel-segment button{font-weight:1000;font-size:9px;letter-spacing:.075em;color:#fffdf0;text-shadow:0 2px 4px rgba(0,0,0,.9),0 0 8px rgba(255,219,118,.18);}
   .wheel-segment button.label-muted{opacity:1;filter:none}
@@ -461,7 +463,9 @@
   .wheel-segment{width:44%;height:34px;margin:-17px 0 0 -22%;}
   .wheel-segment:before{display:none;}
   .wheel-segment button{height:34px;border:0;border-radius:5px;background:transparent;color:#fff7dc;text-shadow:0 2px 3px rgba(0,0,0,.75);box-shadow:none;font-size:7.5px;letter-spacing:.055em;}
-  .wheel-segment button:hover,.wheel-segment button.active{border:0;background:rgba(255,215,102,.13);color:#fff4bd;box-shadow:0 0 18px rgba(255,209,86,.25),inset 0 0 12px rgba(255,255,255,.05);}
+  .wheel-segment{z-index:12;pointer-events:auto}
+.wheel-segment button{position:relative;z-index:13;pointer-events:auto;cursor:pointer}
+.wheel-segment button:hover,.wheel-segment button.active{border:0;background:rgba(255,215,102,.13);color:#fff4bd;box-shadow:0 0 18px rgba(255,209,86,.25),inset 0 0 12px rgba(255,255,255,.05);}
   .wheel-segment.bunk-segment button{background:rgba(255,215,102,.14);color:#fff0a8;border-radius:6px;}
   .wheel-hub{width:82px;height:82px;border:7px solid #b56d1f;background:radial-gradient(circle at 35% 25%,#f5c75d 0,#bd6d1f 23%,#5b270e 52%,#190c07 100%);box-shadow:0 0 0 2px #f6d17a,0 0 0 7px #642e0d,inset 0 5px 13px rgba(255,255,255,.18),inset 0 -12px 20px rgba(0,0,0,.62),0 10px 25px rgba(0,0,0,.7);}
   .wheel-hub:before{width:51px;height:51px;border:1px solid rgba(255,236,155,.6);box-shadow:inset 0 0 14px rgba(255,202,75,.15),0 0 12px rgba(255,202,75,.18);}
@@ -634,6 +638,8 @@ body:before,body:after{display:none!important;}
   letter-spacing:.055em;font-family:'IBM Plex Mono',ui-monospace,monospace;
   text-shadow:0 2px 5px #000,0 0 8px rgba(255,220,110,.25);
 }
+.wheel-segment{z-index:12;pointer-events:auto}
+.wheel-segment button{position:relative;z-index:13;pointer-events:auto;cursor:pointer}
 .wheel-segment button:hover,.wheel-segment button.active{
   background:rgba(255,205,75,.12);color:#fff7cf;border:1px solid rgba(255,211,107,.45);
   box-shadow:0 0 16px rgba(255,190,55,.18);
@@ -746,6 +752,71 @@ body:before,body:after{display:none!important;}
   .galaxy-stars.stars-a,.galaxy-asteroid,.wheel-bulb{animation:none!important;}
 }
 </style>
+
+<style id="desktop-landscape-layout-fix">
+/* Desktop: use the available horizontal canvas; keep phone layout unchanged. */
+@media (min-width: 900px) {
+  .wrap {
+    width: min(1440px, calc(100% - 64px));
+    max-width: none;
+    margin-inline: auto;
+    padding: 26px 0 64px;
+    box-sizing: border-box;
+  }
+  header.app-head { margin-bottom: 26px; }
+  nav#tabs { gap: 10px; flex-wrap: wrap; overflow-x: visible; }
+  nav#tabs button { padding: 10px 16px; }
+  .command-card {
+    display: grid;
+    grid-template-columns: minmax(260px, .85fr) minmax(420px, 1.15fr);
+    align-items: center;
+    column-gap: clamp(28px, 5vw, 76px);
+    width: 100%;
+    box-sizing: border-box;
+    padding: clamp(28px, 3vw, 48px);
+    min-height: 330px;
+    margin: 24px 0 30px;
+    border-radius: 30px;
+  }
+  .command-kicker, .command-sub { max-width: 48ch; }
+  .command-title { font-size: clamp(42px, 4vw, 62px); }
+  .command-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 0; }
+  .command-stat { padding: clamp(18px, 2vw, 28px); min-height: 100px; }
+  .command-stat .v { font-size: clamp(25px, 2vw, 34px); }
+  .portal-wheel-stage { width: min(620px, 48vw); margin-inline: auto; }
+  .portal-wheel { transform-origin: center; }
+  .portal-drop-zone { max-width: 720px; width: min(100%, 720px); }
+  .portal-section-overlay { max-width: 100%; }
+  .rugged-section-card { max-height: none; }
+  #content { width: 100%; }
+}
+@media (min-width: 900px) and (max-width: 1150px) {
+  .wrap { width: calc(100% - 40px); }
+  .command-card { grid-template-columns: minmax(220px, .8fr) minmax(340px, 1.2fr); gap: 24px; }
+}
+</style>
+
+
+<style id="responsive-mobile-vertical-desktop-landscape">
+/* Responsive layout: portrait/stacked on phones, wide horizontal canvas on laptops. */
+@media screen and (min-width: 900px) {
+  html, body { width:100% !important; max-width:none !important; }
+  .wrap { width: min(1500px, calc(100% - 56px)) !important; max-width:none !important; margin-left:auto !important; margin-right:auto !important; }
+  #content, main, .main-content { width:100%; max-width:none; }
+  .command-card { width:100% !important; max-width:none !important; display:grid !important; grid-template-columns:minmax(300px, .9fr) minmax(420px, 1.1fr) !important; align-items:center; }
+  .command-grid { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  .portal-wheel-stage { width:min(680px, 55vw) !important; max-width:680px !important; }
+  .portal-drop-zone { width:min(100%, 1000px) !important; max-width:1000px !important; }
+  .portal-section-overlay, .rugged-section-card { width:100% !important; max-width:none !important; }
+}
+@media screen and (max-width: 899px) {
+  .wrap { width:100% !important; max-width:100% !important; }
+  .command-card { display:flex !important; flex-direction:column !important; width:100% !important; }
+  .command-grid { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  .portal-wheel-stage { width:min(100%, 620px) !important; }
+}
+</style>
+
 </head>
 <body>
   <div class="galaxy-space" aria-hidden="true">
@@ -1929,6 +2000,14 @@ function portalWheelPointerAngle(e){
 function portalWheelPointerDown(e){
   const wheel=document.getElementById('portal-wheel');if(!wheel)return;
   if(e.pointerType==='mouse'&&e.button!==0)return;
+  // Desktop fix: clicking a section button must remain a normal button click.
+  // Do not start a drag or capture the pointer when the event begins on a wheel option.
+  if(e.target && e.target.closest && e.target.closest('.wheel-segment button')){
+    portalWheelDrag.active=false;
+    portalWheelDrag.moved=false;
+    portalWheelDrag.touchIntent=null;
+    return;
+  }
   stopPortalWheel();
   portalWheelDrag={active:true,moved:false,lastAngle:portalWheelPointerAngle(e),lastTime:performance.now(),velocity:0,startX:e.clientX,startY:e.clientY,touchIntent:null};
   wheel.classList.add('dragging');
@@ -2206,7 +2285,7 @@ function renderMyPortal(){
     <p class="rugged-sub">Spin the wheel like a prize wheel. Select a module and watch it drop into the bay.</p>
     <div class="portal-wheel-stage">
       ${portalGestureNotice?`<div class="portal-gesture-notice bird-fade ${portalGestureNotice.birdDir||'bird-left'}"><div class="notice-content"><b><i>${portalGestureNotice.icon}</i>${esc(portalGestureNotice.gesture)} GESTURE</b><span>${esc(portalGestureNotice.msg)}</span><div class="notice-bar"></div></div><div class="gesture-bird" aria-hidden="true"><svg viewBox="0 0 42 26"><path d="M3 13c6-8 11-8 18 0 7-8 12-8 18 0-6-2-10-1-14 4-2 3-6 3-8 0-4-5-8-6-14-4Z"/></svg></div></div>`:''}
-      <div class="wheel-prize-sign" aria-hidden="true"><span>SPIN!</span></div><div class="wheel-pointer-top" aria-hidden="true"></div>${renderWheelBulbs(18)}
+      <div class="wheel-pointer-top" aria-hidden="true"></div>${renderWheelBulbs(18)}
       <div id="portal-wheel" class="portal-wheel" style="transform:translate3d(0,0,0) rotate(${portalWheelRotation}deg);--wheel-rot:${portalWheelRotation}deg" aria-label="Interactive portal wheel" onpointerdown="portalWheelPointerDown(event)" onpointermove="portalWheelPointerMove(event)" onpointerup="portalWheelPointerUp(event)" onpointercancel="portalWheelPointerUp(event)">`;
   const n=wheelKeys.length;
   wheelKeys.forEach((key,i)=>{
@@ -2216,9 +2295,9 @@ function renderMyPortal(){
     html+=`<div class="wheel-segment ${isBunk?'bunk-segment':''}" style="--angle:${angle}deg"><button class="${active?'active':''}${muted}" aria-label="${esc(isBunk?'Bunk Management':portalWheelName(page,key))}" style="--label-counter:calc(0deg - var(--wheel-rot, 0deg))" onclick='selectPortalSection(${JSON.stringify(key)})'>${wheelSmallCaps(isBunk?'BUNK MANAGEMENT':portalWheelName(page,key))}</button></div>`;
   });
   html+=`</div>${renderWheelGhostNames(wheelKeys)}
-      <div class="wheel-controls"><button class="wheel-control" onclick="togglePortalWheelPlay()">SPINNING</button><button class="wheel-control wheel-undo" title="Rotate wheel backward" onclick="setPortalWheelRotation(portalWheelRotation-35)">UNDO</button><button class="wheel-control wheel-redo" title="Rotate wheel forward" onclick="setPortalWheelRotation(portalWheelRotation+35)">REDO</button></div>
+      <div class="wheel-controls"><button class="wheel-control wheel-undo" title="Rotate wheel backward" onclick="setPortalWheelRotation(portalWheelRotation-35)">UNDO</button><button class="wheel-control wheel-redo" title="Rotate wheel forward" onclick="setPortalWheelRotation(portalWheelRotation+35)">REDO</button></div>
     </div>
-    <div class="wheel-status">FREE SPIN // DRAG • FLICK • REVERSE • PLAY</div>
+    <div class="wheel-status">DRAG • FLICK • REVERSE</div>
     ${renderPortalDropZone()}
     ${portalOverlayKey&&portalOverlayKey!=='__bunk_management__'?renderSelectedPortalSection(portalOverlayKey):''}
   </div>`;
@@ -2981,3 +3060,40 @@ setInterval(() => checkAndNotify(false), 60 * 60 * 1000); // re-check hourly whi
 </script>
 </body>
 </html>
+
+<style id="compact-desktop-controls-and-wheel-polish">
+/* Compact, balanced controls on desktop; phone layout remains stacked. */
+@media screen and (min-width: 900px) {
+  .dash-header {
+    display:flex !important; flex-wrap:wrap; align-items:center; justify-content:center;
+    gap:10px !important; padding:12px 16px 16px !important;
+    width:100%; box-sizing:border-box;
+  }
+  .dash-header .btn-ghost, .dash-header .btn-add,
+  .dash-header .contact-btn, .dash-header .account-btn {
+    width:auto !important; min-width:155px; max-width:260px; flex:0 1 auto;
+    min-height:44px; padding:11px 18px; border-radius:14px;
+    justify-content:center; white-space:nowrap;
+  }
+  .dash-header .account-btn { min-width:205px; }
+  .portal-drop-zone {
+    width:min(100%, 760px) !important; max-width:760px !important;
+    padding:14px 16px; margin:18px auto 0; border-radius:20px;
+  }
+  .dropped-portal-card { padding:14px 16px; gap:13px; border-radius:16px; }
+  .dropped-copy b { font-size:12px; }
+  .dropped-copy small { font-size:9px; }
+  .drop-zone-head { font-size:10px; margin-bottom:10px; }
+  .drop-zone-head small { font-size:10px; }
+  .wheel-controls { gap:10px; }
+  .wheel-control { min-width:78px; padding:10px 18px; border-radius:12px; }
+}
+/* Remove decorative spin banner/labels; keep wheel, pointer, bulbs and section selection. */
+.wheel-prize-sign { display:none !important; }
+.wheel-status { letter-spacing:.14em; }
+@media screen and (max-width: 899px) {
+  .dash-header { display:grid !important; grid-template-columns:1fr 1fr !important; }
+  .dash-header .btn-ghost, .dash-header .btn-add,
+  .dash-header .contact-btn, .dash-header .account-btn { width:100% !important; min-width:0; }
+}
+</style>
